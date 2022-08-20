@@ -2,6 +2,10 @@ TITLE: str = 'Mobile API Service'
 DESCRIPTION: str = 'Mobile API Service - служит сервисом для мобильного сайта.'
 VERSION: str = '1.0.0'
 
+CORS_POLICY = [
+    '*'
+]
+
 
 DATABASE_USERNAME: str = "user"
 DATABASE_PASSWORD: str = "Dmitry_321011"
