@@ -11,24 +11,25 @@ from modules.error.error_data import raise_error
 router = APIRouter()
 
 
-@router.get("/{product_id}", response_model=scheme_product.DetailProduct)
+# @router.get("/{product_id}", response_model=scheme_product.DetailProduct)
+@router.get("/{product_id}")
 def get_detail_product(product_id: int, db: Session = Depends(get_db)):
     """Получение информации о продукте.\n
     ---
     **product_id**: Уникальное значение\n
     **model**: Номер модели продукта.\n
-    **price**: Цена на продукт.\n
-    **name**: Статус товара строкой.\n
     **image**: Изображение продукта.\n
+    **price**: Цена на продукт.\n
+    **quantity**: Количество доступных товаров.\n
+    **name**: Статус товара строкой.\n
     """
     product = orm_product.get_product_by_id(product_id, db)
-
     if not product:
         raise_error(status.HTTP_404_NOT_FOUND, "Not Found!")
     return product
 
 
-@router.post('/multiple', response_model=list[scheme_product.DetailProduct])
+@ router.post('/multiple', response_model=list[scheme_product.DetailProduct])
 def get_detail_multiple_products(multiple_product: scheme_product.MultipleProduct, db: Session = Depends(get_db)):
     """Получение данных из базы данных.
     ---
@@ -42,7 +43,7 @@ def get_detail_multiple_products(multiple_product: scheme_product.MultipleProduc
     return product
 
 
-@router.get("/{product_id}/description", response_model=scheme_product.DetailDescriptionProduct)
+@ router.get("/{product_id}/description", response_model=scheme_product.DetailDescriptionProduct)
 def get_product_description(product_id: int, db: Session = Depends(get_db)):
     """Получение подробного описание продукта"""
     product = orm_product.get_product_description_by_id(product_id, db)
@@ -52,7 +53,7 @@ def get_product_description(product_id: int, db: Session = Depends(get_db)):
     return product
 
 
-@router.get("/page/{page}")
+@ router.get("/page/{page}")
 def get_product_category(page: int, limit: int = 10, db: Session = Depends(get_db)):
     """Пагинация страниц
     ---
@@ -63,7 +64,7 @@ def get_product_category(page: int, limit: int = 10, db: Session = Depends(get_d
     return product
 
 
-@router.get("/search/{search}", response_model=list[scheme_product.DetailProduct])
+@ router.get("/search/{search}", response_model=list[scheme_product.DetailProduct])
 def product_search(search: str, limit: int = 5, db: Session = Depends(get_db)):
     """Поиск товара по модели
     ---
@@ -73,7 +74,7 @@ def product_search(search: str, limit: int = 5, db: Session = Depends(get_db)):
     return product
 
 
-@router.get("/popular", response_model=list[scheme_product.PopularProduct])
+@ router.get("/popular", response_model=list[scheme_product.PopularProduct])
 def get_popular_product(limit: int = 5, db: Session = Depends(get_db)):
     """Список самых просматриваемых товаров.
     Не отображает скрытые товары.

@@ -4,12 +4,17 @@ from typing import List
 from modules.error.error_data import raise_error
 
 
+class Option(BaseModel):
+    name: str
+
+
 class PopularProduct(BaseModel):
 
     product_id: int
     model: str
     image: str
     price: float
+    name: list[Option]
 
     class Config:
         orm_mode = True
@@ -21,6 +26,7 @@ class DetailProduct(BaseModel):
     model: str
     image: str
     price: float
+    quantity: int
     name: str
 
     class Config:

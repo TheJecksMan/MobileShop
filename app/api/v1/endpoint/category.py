@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from multiprocessing import parent_process
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from modules.database.deps import get_db
 
@@ -12,9 +13,16 @@ router = APIRouter()
 
 
 @router.get("/all")
-def get_all_category(page: int = None, limit: int = None, db: Session = Depends(get_db)):
-    category = orm_category.get_all_category(db, page, limit)
+def get_all_categories(page: int = None, limit: int = None, db: Session = Depends(get_db)):
+    """Получение списка всех доступный родительских катологов"""
+    category = orm_category.get_all_categories(db, page, limit)
     return category
+
+
+@router.get("/parent/{category_id}")
+def get_parent_categories(category_id: int, db: Session = Depends(get_db)):
+    parent_categories = orm_category.get_parent_categories(category_id, db)
+    return parent_categories
 
 
 @router.get("/{category_id}/page/{page}")
