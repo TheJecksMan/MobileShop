@@ -6,11 +6,9 @@ from typing import List
 
 
 def get_product_by_id(product_id: int, db: Session):
-    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProduct.quantity, OcStockStatu.name)\
+    return db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProduct.quantity, OcStockStatu.name, OcOptionValueDescription.name)\
         .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
         .filter(OcProduct.product_id == product_id).first()
-
-    return query
 
 
 def get_multiple_product_by_id(products_ids: List[int], db: Session):

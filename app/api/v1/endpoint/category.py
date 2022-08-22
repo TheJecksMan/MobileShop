@@ -29,3 +29,9 @@ def get_parent_categories(category_id: int, db: Session = Depends(get_db)):
 def get_product_category(category_id: int, page: int, limit: int = 10, db: Session = Depends(get_db)):
     category_product = orm_category.get_product_by_category(category_id, page, limit, db)
     return category_product
+
+
+@router.get('search/{search_text}')
+def categories_search(search_text: str, limit: int = 5, db: Session = Depends(get_db)):
+    category = orm_category.search_categories(search_text, limit, db)
+    return category

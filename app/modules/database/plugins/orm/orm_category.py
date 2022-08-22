@@ -24,8 +24,13 @@ def get_all_categories(db: Session, page: int = None, limit: int = None):
         return query.limit(limit).offset(page*limit).all()
 
 
+def search_categories(search_text: str, limit: int, db: Session):
+    return db.query(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
+        .filter(OcCategory.image.like(f'%{search_text}%'), OcCategory.status == 1).limit(limit).all()
+
+
 def get_parent_categories(category_id: int, db: Session):
-    return db.query(OcCategory.image, OcCategoryDescription.name)\
+    return db.query(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategoryDescription, OcCategory.category_id == OcCategoryDescription.category_id)\
         .filter(OcCategory.status == 1, OcCategory.parent_id != 0, OcCategory.category_id == category_id)\
         .order_by(OcCategory.sort_order.asc()).all()
