@@ -74,12 +74,11 @@ def product_search(search: str, limit: int = 5, db: Session = Depends(get_db)):
     return product
 
 
-@router.get("/popular", response_model=list[scheme_product.PopularProduct])
-def get_popular_product(limit: int = 5, db: Session = Depends(get_db)):
+@router.get("/popular/{limit}")
+def get_popular_product(limit: int, db: Session = Depends(get_db)):
     """Список самых просматриваемых товаров.
     Не отображает скрытые товары.
     """
+    print(limit)
     product = orm_product.get_popular_product(limit, db)
-    if not product:
-        raise_error(status.HTTP_400_BAD_REQUEST)
     return product

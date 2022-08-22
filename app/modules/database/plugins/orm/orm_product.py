@@ -13,8 +13,8 @@ def get_product_by_id(product_id: int, db: Session):
 
 def get_multiple_product_by_id(products_ids: List[int], db: Session):
     return db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcStockStatu.name)\
-        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id, OcProduct.status == 1)\
-        .filter(OcProduct.product_id.in_(products_ids)).all()
+        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
+        .filter(OcProduct.product_id.in_(products_ids),  OcProduct.status == 1).all()
 
 
 def get_product_description_by_id(product_id: int, db: Session):
@@ -22,14 +22,17 @@ def get_product_description_by_id(product_id: int, db: Session):
 
 
 def get_popular_product(limit: int, db: Session):
-    return db.query(OcProduct).filter(OcProduct.status == 1).order_by(OcProduct.viewed.desc()).limit(limit).all()
+    return db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcStockStatu.name)\
+        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
+        .filter(OcProduct.status == 1)\
+        .order_by(OcProduct.viewed.desc()).limit(limit).all()
 
 
 def get_all_product(page: int, limit: int, db: Session):
-    return db.query(OcProduct.product_id, OcProduct.image, OcProduct.price).filter(OcProduct.status == 1).limit(limit).offset(page*limit).all()
+    return db.query(OcProduct.product_id, OcProduct.image, OcProduct.price)\
+        .filter(OcProduct.status == 1).limit(limit).offset(page*limit).all()
 
 
 def search_product(search_text: str, limit: int, db: Session):
-    return db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcStockStatu.name)\
-        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
+    return db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price)\
         .filter(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1).limit(limit).all()
