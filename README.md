@@ -11,6 +11,7 @@ Back-end для мобильной версии сайта
 7. Выполнить для локального запуска `uvicorn main:app --workers 3`
 
 Выполнить для локального запуска `uvicorn main:app --workers 3 --host 0.0.0.0 --port 80`
+
 8. Запуск!
 
 ### Linux
