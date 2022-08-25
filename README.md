@@ -9,10 +9,8 @@ Back-end для мобильной версии сайта
 5. Установить зависимости `pip intsall  --no-cache-dir  -r requirements.txt`
 6. Перейти в папку с **main.py** `cd app/`
 7. Выполнить для локального запуска `uvicorn main:app --workers 3`
-
-Выполнить для локального запуска `uvicorn main:app --workers 3 --host 0.0.0.0 --port 80`
-
-8. Запуск!
+8. Или выполнить для локального запуска `uvicorn main:app --workers 3 --host 0.0.0.0 --port 80`
+9. Запуск!
 
 ### Linux
 Для функционнирования нового драйвера требуется зависимости
