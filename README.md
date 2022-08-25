@@ -7,8 +7,8 @@ Back-end для мобильной версии сайта
 3. Создать виртуальное окружение `python -m venv .venv`
 4. Войти в виртуальное окружение
 5. Установить зависимости `pip intsall  --no-cache-dir  -r requirements.txt`
-6. Перейти в папку с **main.py**
-7. Выполнить команду `uvicorn main:app`
+6. Перейти в папку с **main.py** `cd app/`
+7. Выполнить команду `uvicorn main:app --workers 3`
 8. Запуск!
 
 
