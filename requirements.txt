@@ -3,4 +3,5 @@ uvicorn[standard]
 SQLAlchemy
 cryptography
 gunicorn
-pymysql
+mysqlclient
+fastapi-pagination
