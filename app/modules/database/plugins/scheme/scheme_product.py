@@ -12,8 +12,9 @@ class PopularProduct(BaseModel):
     price: float
     name: str
 
-    class Config:
-        orm_mode = True
+
+class AdvancedPopularProduct(BaseModel):
+    items: List[PopularProduct]
 
 
 class DetailProduct(BaseModel):
@@ -25,17 +26,15 @@ class DetailProduct(BaseModel):
     quantity: int
     name: str
 
-    class Config:
-        orm_mode = True
+
+class AdvancedProduct(BaseModel):
+    items: List[DetailProduct]
 
 
-class DetailDescriptionProduct(BaseModel):
+class DetailDescProduct(BaseModel):
     product_id: int
     name: str
     description: str
-
-    class Config:
-        orm_mode = True
 
 
 class MultipleProduct(BaseModel):
@@ -44,5 +43,16 @@ class MultipleProduct(BaseModel):
     @validator('ids')
     def check_value(cls, value):
         if len(value) > 20:
-            raise_error(400, "Привышен лимит значений!")
+            raise_error(400, "Некорректное кол-во значений")
         return value
+
+
+class SearchProduct(BaseModel):
+    product_id: int
+    model: str
+    image: str
+    price: float
+
+
+class AdvancedSearchProduct(BaseModel):
+    items: List[SearchProduct]
