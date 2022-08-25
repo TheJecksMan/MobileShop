@@ -8,7 +8,9 @@ Back-end для мобильной версии сайта
 4. Войти в виртуальное окружение
 5. Установить зависимости `pip intsall  --no-cache-dir  -r requirements.txt`
 6. Перейти в папку с **main.py** `cd app/`
-7. Выполнить команду `uvicorn main:app --workers 3`
+7. Выполнить для локального запуска `uvicorn main:app --workers 3`
+
+Выполнить для локального запуска `uvicorn main:app --workers 3 --host 0.0.0.0 --port 80`
 8. Запуск!
 
 ### Linux
