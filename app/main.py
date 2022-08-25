@@ -5,7 +5,6 @@ from api.v1.api import api_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
-
 app = FastAPI(
     title=TITLE,
     description=DESCRIPTION,
@@ -20,9 +19,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_POLICY,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=['GET', 'POST'],
     allow_headers=["*"],
 )
-
 
 app.include_router(api_router, prefix='/api')
