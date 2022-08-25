@@ -11,7 +11,10 @@ Back-end для мобильной версии сайта
 7. Выполнить команду `uvicorn main:app --workers 3`
 8. Запуск!
 
+### Linux
+Для функционнирования нового драйвера требуется зависимости
 
+Выполните `sudo apt-get install python3-dev default-libmysqlclient-dev build-essential`
 ## ROADMAP
 
 ### Категории
