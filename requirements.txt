@@ -4,4 +4,4 @@ SQLAlchemy
 cryptography
 gunicorn
 mysqlclient
-fastapi-pagination
+fastapi-mail

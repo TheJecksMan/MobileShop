@@ -1,5 +1,13 @@
-from sqlalchemy.orm import Session
-from modules.database.plugins.models import OcProduct, OcProductDescription, OcStockStatu, OcProductToCategory
+from sqlalchemy.orm import Session, aliased
+from modules.database.plugins.models import (
+    OcProduct,
+    OcProductDescription,
+    OcStockStatu,
+    OcProductToCategory,
+    OcOptionValueDescription,
+    OcOptionDescription,
+    OcProductOptionValue as prod_option
+)
 
 from typing import List
 
@@ -51,3 +59,21 @@ def search_product(category_id: int, search_text: str, limit: int, db: Session):
     if category_id != None:
         query.join(OcProductToCategory, OcProductToCategory.category_id == category_id)
     return query.limit(limit).all()
+
+
+def get_params_option(db: Session):
+    queryName = db.query(OcOptionDescription.option_id, OcOptionDescription.name).all()
+    queryParams = db.query(OcOptionValueDescription.option_id, OcOptionValueDescription.name).all()
+    return queryName, queryParams
+
+
+def get_equipment(product_id: int, db: Session):
+    query = db.query(
+        OcOptionValueDescription.name,
+        OcOptionDescription.name.label('type'), prod_option.product_id,
+        prod_option.quantity, prod_option.price, prod_option.price_prefix,
+        prod_option.points, prod_option.points_prefix, prod_option.weight, prod_option.weight_prefix)\
+        .filter(prod_option.product_id == product_id)\
+        .join(OcOptionValueDescription, OcOptionValueDescription.option_value_id == prod_option.option_value_id)\
+        .join(OcOptionDescription, OcOptionDescription.option_id == prod_option.option_id).all()
+    return query

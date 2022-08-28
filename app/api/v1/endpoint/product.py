@@ -6,20 +6,38 @@ from modules.database.plugins.orm import orm_product
 from modules.database.plugins.scheme.scheme_product import (
     AdvancedPopularProduct,
     DetailDescProduct,
-    DetailProduct,
     MultipleProduct,
-    AdvancedSearchProduct
+    AdvancedSearchProduct,
+    FilterGeneral,
+    AdvancedDetailProduct,
+    DetailProduct
 )
 
 
 router = APIRouter()
 
 
-@router.get("/{product_id}", response_model=DetailProduct)
+@router.get("/{product_id}", response_model=AdvancedDetailProduct)
 def get_detail_product(product_id: int, db: Session = Depends(get_db)):
     """Получение базовой информации о продукте."""
-    product = orm_product.get_product_by_id(product_id, db)
-    return product
+    base_product = orm_product.get_product_by_id(product_id, db)
+    base_desc = orm_product.get_product_description_by_id(product_id, db)
+    desc = DetailProduct(
+        product_id=base_product.product_id,
+        model=base_product.model,
+        image=base_product.image,
+        price=base_product.price,
+        quantity=base_product.quantity,
+        name=base_product.name,
+        descriptions=base_desc
+    )
+    return AdvancedDetailProduct(item=desc)
+
+
+@router.get("/equipment/{product_id}")
+def get_equipment_product(product_id, db: Session = Depends(get_db)):
+    equipment = orm_product.get_equipment(product_id, db)
+    return equipment
 
 
 @router.post('/multiple', response_model=AdvancedPopularProduct)
@@ -60,3 +78,11 @@ def get_popular_product(limit: int, db: Session = Depends(get_db)):
     """
     product = orm_product.get_popular_product(limit, db)
     return AdvancedPopularProduct(items=product)
+
+
+@router.get("/filter/all")
+def get_all_param_filter(db: Session = Depends(get_db)):
+    """Получение полного списка доступных параметров для последующей фильтрации"""
+    params, option = orm_product.get_params_option(db)
+
+    return FilterGeneral(items=params, option=option)

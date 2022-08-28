@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import List
+from typing import List, Optional
 
 from modules.error.error_data import raise_error
 
@@ -17,6 +17,12 @@ class AdvancedPopularProduct(BaseModel):
     items: List[PopularProduct]
 
 
+class DetailDescProduct(BaseModel):
+    product_id: int
+    name: str
+    description: str
+
+
 class DetailProduct(BaseModel):
 
     product_id: int
@@ -26,15 +32,15 @@ class DetailProduct(BaseModel):
     quantity: int
     name: str
 
+    descriptions: Optional[DetailDescProduct]
+
 
 class AdvancedProduct(BaseModel):
     items: List[DetailProduct]
 
 
-class DetailDescProduct(BaseModel):
-    product_id: int
-    name: str
-    description: str
+class AdvancedDetailProduct(BaseModel):
+    item: Optional[DetailProduct]
 
 
 class MultipleProduct(BaseModel):
@@ -56,3 +62,13 @@ class SearchProduct(BaseModel):
 
 class AdvancedSearchProduct(BaseModel):
     items: List[SearchProduct]
+
+
+class FilterName(BaseModel):
+    option_id: int
+    name: str
+
+
+class FilterGeneral(BaseModel):
+    items: List[FilterName]
+    option: List[FilterName]
