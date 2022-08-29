@@ -2,7 +2,12 @@ import re
 from pydantic import BaseModel, EmailStr, validator, Field
 from modules.error.error_data import raise_error
 
-from typing import List
+from typing import List, Dict
+
+
+class AdvansedOption(BaseModel):
+    option_name: str
+    product_type: str
 
 
 class EmailSchema(BaseModel):
@@ -11,6 +16,7 @@ class EmailSchema(BaseModel):
     email_recipients: List[EmailStr]
     description: str = Field(max_length=500)
     product_id: List[int]
+    options: Dict[int, AdvansedOption]
 
     @validator("phone")
     def phone_validation(cls, value):

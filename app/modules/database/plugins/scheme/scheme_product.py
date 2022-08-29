@@ -4,13 +4,27 @@ from typing import List, Optional
 from modules.error.error_data import raise_error
 
 
-class PopularProduct(BaseModel):
+class BaseProduct(BaseModel):
+    product_id: int
+    model: str
+    image: str
+    price: float
 
+
+class MultipleProduct(BaseModel):
     product_id: int
     model: str
     image: str
     price: float
     name: str
+
+
+class AdvancedMultipleProduct(BaseModel):
+    items: List[MultipleProduct]
+
+
+class PopularProduct(BaseProduct):
+    description: str
 
 
 class AdvancedPopularProduct(BaseModel):
@@ -23,12 +37,7 @@ class DetailDescProduct(BaseModel):
     description: str
 
 
-class DetailProduct(BaseModel):
-
-    product_id: int
-    model: str
-    image: str
-    price: float
+class DetailProduct(BaseProduct):
     quantity: int
     name: str
 
@@ -53,15 +62,8 @@ class MultipleProduct(BaseModel):
         return value
 
 
-class SearchProduct(BaseModel):
-    product_id: int
-    model: str
-    image: str
-    price: float
-
-
 class AdvancedSearchProduct(BaseModel):
-    items: List[SearchProduct]
+    items: List[BaseProduct]
 
 
 class FilterName(BaseModel):

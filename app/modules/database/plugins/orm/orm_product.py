@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session
 from modules.database.plugins.models import (
     OcProduct,
     OcProductDescription,
@@ -25,7 +25,7 @@ def get_product_by_id(product_id: int, db: Session):
 
 
 def get_multiple_product_by_id(products_ids: List[int], db: Session):
-    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcStockStatu.name)\
+    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price)\
         .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
         .filter(OcProduct.product_id.in_(products_ids),  OcProduct.status == 1).all()
     if not query:
@@ -40,9 +40,9 @@ def get_product_description_by_id(product_id: int, db: Session):
 
 
 def get_popular_product(limit: int, db: Session):
-    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcStockStatu.name)\
-        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
+    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .filter(OcProduct.status == 1)\
+        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
         .order_by(OcProduct.viewed.desc()).limit(limit).all()
     return query
 

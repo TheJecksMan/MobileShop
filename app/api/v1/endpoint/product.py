@@ -63,7 +63,7 @@ def get_product_category(page: int, limit: int = 10, db: Session = Depends(get_d
     return product
 
 
-@router.get("/search/{search}", response_model=AdvancedSearchProduct)
+@router.get("/search/{search_text}", response_model=AdvancedSearchProduct)
 def product_search(search_text: str, limit: int = 5, category_id: int = None, db: Session = Depends(get_db)):
     """Поиск товара по названию товара.
     Возможен поиск товаров в конкретной категории"""
