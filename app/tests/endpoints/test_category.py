@@ -19,3 +19,28 @@ def test_product_category():
 def test_category_search():
     response = client.get("/api/caregories/search/%D0%BE%D0%B2?limit=5")
     assert response.status_code == 200
+
+
+def test_product_multiple():
+    response = client.post(
+        "/api/product/multiple",
+        json={
+            "ids": [66, 67]
+        },)
+    assert response.status_code == 200
+    assert response.json() == {
+        "items": [
+            {
+                "product_id": 66,
+                "model": "Кровать Бали",
+                "image": "catalog/produkt/krovat-bali.jpg",
+                "price": 13600
+            },
+            {
+                "product_id": 67,
+                "model": "Кровать Дачная",
+                "image": "catalog/produkt/krovat-dachnaya.jpg",
+                "price": 9700
+            }
+        ]
+    }
