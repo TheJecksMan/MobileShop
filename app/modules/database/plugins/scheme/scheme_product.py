@@ -11,10 +11,6 @@ class BaseProduct(BaseModel):
     price: float
 
 
-class AdvancedMultipleProduct(BaseModel):
-    items: List[BaseProduct]
-
-
 class PopularProduct(BaseProduct):
     description: str
 
@@ -25,6 +21,10 @@ class AdvancedPopularProduct(BaseModel):
 
 class DescPoroduct(BaseModel):
     description: str
+
+
+class AdvancedMultipleProduct(BaseModel):
+    items: List[PopularProduct]
 
 
 class DetailProduct(BaseProduct):

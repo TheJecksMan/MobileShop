@@ -25,8 +25,9 @@ def get_product_by_id(product_id: int, db: Session):
 
 
 def get_multiple_product_by_id(products_ids: List[int], db: Session):
-    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price)\
+    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
+        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
         .filter(OcProduct.product_id.in_(products_ids),  OcProduct.status == 1).all()
     if not query:
         raise_error(404)
