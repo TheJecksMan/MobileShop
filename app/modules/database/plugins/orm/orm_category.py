@@ -13,7 +13,6 @@ def get_product_by_category(category_id: int, page: int, limit: int, db: Session
 
 
 def get_all_categories(db: Session, page: int = None, limit: int = None):
-
     query = db.query(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategoryDescription, OcCategory.category_id == OcCategoryDescription.category_id)\
         .filter(OcCategory.status == 1, OcCategory.parent_id == 0)\

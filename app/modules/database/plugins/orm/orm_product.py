@@ -34,8 +34,8 @@ def get_multiple_product_by_id(products_ids: List[int], db: Session):
 
 
 def get_product_description_by_id(product_id: int, db: Session):
-    query = db.query(OcProductDescription.product_id, OcProductDescription.name, OcProductDescription.description).filter(
-        OcProductDescription.product_id == product_id).first()
+    query = db.query(OcProductDescription.description)\
+        .filter(OcProductDescription.product_id == product_id).first()
     return query
 
 

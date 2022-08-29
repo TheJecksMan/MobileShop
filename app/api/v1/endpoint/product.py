@@ -5,12 +5,13 @@ from modules.database.deps import get_db
 from modules.database.plugins.orm import orm_product
 from modules.database.plugins.scheme.scheme_product import (
     AdvancedPopularProduct,
-    DetailDescProduct,
     MultipleProduct,
     AdvancedSearchProduct,
     FilterGeneral,
     AdvancedDetailProduct,
-    DetailProduct
+    DetailProduct,
+    AdvancedMultipleProduct,
+    DescPoroduct
 )
 
 
@@ -29,7 +30,7 @@ def get_detail_product(product_id: int, db: Session = Depends(get_db)):
         price=base_product.price,
         quantity=base_product.quantity,
         name=base_product.name,
-        descriptions=base_desc
+        description=base_desc.description
     )
     return AdvancedDetailProduct(item=desc)
 
@@ -40,17 +41,17 @@ def get_equipment_product(product_id, db: Session = Depends(get_db)):
     return equipment
 
 
-@router.post('/multiple', response_model=AdvancedPopularProduct)
+@router.post('/multiple', response_model=AdvancedMultipleProduct)
 def get_detail_multiple_products(multiple_product: MultipleProduct, db: Session = Depends(get_db)):
     """Получение базовых данных о нескольких товарах.
     ---
     Ограничение на вход до 20 значений списка
     """
     product = orm_product.get_multiple_product_by_id(multiple_product.ids, db)
-    return AdvancedPopularProduct(items=product)
+    return AdvancedMultipleProduct(items=product)
 
 
-@router.get("/{product_id}/description", response_model=DetailDescProduct)
+@router.get("/{product_id}/description", response_model=DescPoroduct)
 def get_product_description(product_id: int, db: Session = Depends(get_db)):
     """Получение подробного описание продукта"""
     product = orm_product.get_product_description_by_id(product_id, db)
