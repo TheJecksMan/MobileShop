@@ -26,7 +26,6 @@ def get_product_by_id(product_id: int, db: Session):
 
 def get_multiple_product_by_id(products_ids: List[int], db: Session):
     query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
-        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
         .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
         .filter(OcProduct.product_id.in_(products_ids),  OcProduct.status == 1).all()
     if not query:
@@ -50,8 +49,11 @@ def get_popular_product(limit: int, db: Session):
 
 def get_all_product(page: int, limit: int, db: Session):
     query = db.query(OcProduct.product_id, OcProduct.image, OcProduct.price)\
-        .filter(OcProduct.status == 1).limit(limit).offset(page*limit).all()
-    return query
+        .filter(OcProduct.status == 1).limit(limit)
+    if page != 1:
+        return query.offset(page*limit).all()
+    else:
+        return query.all()
 
 
 def search_product(category_id: int, search_text: str, limit: int, db: Session):

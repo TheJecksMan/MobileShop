@@ -6,8 +6,8 @@ from typing import List, Dict
 
 
 class AdvansedOption(BaseModel):
-    option_name: str
-    product_type: str
+    option_name: Doct[str]
+    product_type: l
 
 
 class EmailSchema(BaseModel):

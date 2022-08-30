@@ -19,9 +19,6 @@ def test_search_product():
 def test_description_product():
     response = client.get("/api/product/288/description")
     assert response.status_code == 200
-    assert response.json() == {
-        "description": ""
-    }
 
 
 def test_equipment_product():

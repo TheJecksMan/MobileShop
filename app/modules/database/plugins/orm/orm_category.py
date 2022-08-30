@@ -1,15 +1,19 @@
 from sqlalchemy.orm import Session
 
-from modules.database.plugins.models import OcCategory, OcCategoryDescription, OcProductToCategory, OcProduct
+from modules.database.plugins.models import OcCategory, OcCategoryDescription, OcProductToCategory, OcProduct, OcProductDescription
 
 
 def get_product_by_category(category_id: int, page: int, limit: int, db: Session):
-    query = db.query(OcProduct.product_id, OcProductToCategory.category_id, OcProduct.model, OcProduct.image, OcProduct.price)\
+    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
+        .join(OcProductDescription, OcProduct.product_id == OcProductDescription.product_id)\
         .filter(OcProductToCategory.category_id == category_id, OcProduct.status == 1)\
         .order_by(OcProduct.sort_order.asc())\
-        .limit(limit).offset(page*limit).all()
-    return query
+        .limit(limit)
+
+    if page != 1:
+        return query.offset(page*limit).all()
+    return query.all()
 
 
 def get_all_categories(db: Session, page: int = None, limit: int = None):
@@ -21,7 +25,10 @@ def get_all_categories(db: Session, page: int = None, limit: int = None):
     if None in [page, limit]:
         return query.all()
     else:
-        return query.limit(limit).offset(page*limit).all()
+        query.limit(limit)
+        if page != 1:
+            return query.offset(page*limit).all()
+        return query.all()
 
 
 def search_categories(search_text: str, limit: int, db: Session):

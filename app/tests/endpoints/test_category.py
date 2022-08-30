@@ -28,19 +28,3 @@ def test_product_multiple():
             "ids": [66, 67]
         },)
     assert response.status_code == 200
-    assert response.json() == {
-        "items": [
-            {
-                "product_id": 66,
-                "model": "Кровать Бали",
-                "image": "catalog/produkt/krovat-bali.jpg",
-                "price": 13600
-            },
-            {
-                "product_id": 67,
-                "model": "Кровать Дачная",
-                "image": "catalog/produkt/krovat-dachnaya.jpg",
-                "price": 9700
-            }
-        ]
-    }

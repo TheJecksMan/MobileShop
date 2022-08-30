@@ -17,6 +17,7 @@ class DetailProduct(BaseModel):
     model: str
     image: str
     price: float
+    description: str
 
 
 class AdvancedProduct(BaseModel):
