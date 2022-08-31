@@ -6,17 +6,22 @@ from typing import List, Dict
 
 
 class AdvansedOption(BaseModel):
-    option_name: Doct[str]
-    product_type: l
+    model: str
+    image: str | None = None
+    price: float
+    count: int
+    option: Dict[str, float]
 
 
 class EmailSchema(BaseModel):
     fio: str
     phone: str
+    email_user: EmailStr
+    adress_user: str | None = None
     email_recipients: List[EmailStr]
-    description: str = Field(max_length=500)
-    product_id: List[int]
-    options: Dict[int, AdvansedOption]
+    comment: str = Field(max_length=500)
+    models: List[AdvansedOption]
+    general_price: float
 
     @validator("phone")
     def phone_validation(cls, value):

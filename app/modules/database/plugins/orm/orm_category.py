@@ -25,10 +25,9 @@ def get_all_categories(db: Session, page: int = None, limit: int = None):
     if None in [page, limit]:
         return query.all()
     else:
-        query.limit(limit)
         if page != 1:
-            return query.offset(page*limit).all()
-        return query.all()
+            return query.limit(limit).offset(page*limit).all()
+        return query.limit(limit).all()
 
 
 def search_categories(search_text: str, limit: int, db: Session):

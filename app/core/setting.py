@@ -1,3 +1,4 @@
+from pathlib import Path
 from fastapi_mail import ConnectionConfig
 
 TITLE: str = 'Mobile API Service'
@@ -22,5 +23,6 @@ CONF = ConnectionConfig(
     MAIL_SERVER="smtp.rambler.ru",
     MAIL_SSL=True,
     USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True
+    VALIDATE_CERTS=True,
+    TEMPLATE_FOLDER=Path(__file__).parent.parent / "modules" / "mail" / "template",
 )
