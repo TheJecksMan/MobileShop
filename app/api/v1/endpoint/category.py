@@ -24,9 +24,19 @@ def get_parent_categories(category_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{category_id}/product", response_model=AdvancedProduct)
-def get_product_category(category_id: int, page: int, limit: int = 10, db: Session = Depends(get_db)):
-    """Получения всего списка товаров из категории"""
-    category_product = orm_category.get_product_by_category(category_id, page, limit, db)
+def get_product_category(
+    category_id: int, page: int, limit: int = 10,
+    sort_date: int = None, sort_price: int = None, sort_name: int = None,
+    db: Session = Depends(get_db)
+):
+    """Получения всего списка товаров из категории
+    ----
+    Сортировки принимают только значения -1 и  1!\n
+    -1 - по убыванию\n
+    1 -  по возрастанию
+    """
+    category_product = orm_category.get_product_by_category(
+        category_id, page, limit, db, sort_date, sort_price, sort_name)
     return AdvancedProduct(items=category_product)
 
 

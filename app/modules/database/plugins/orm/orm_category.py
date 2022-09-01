@@ -1,19 +1,39 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from modules.database.plugins.models import OcCategory, OcCategoryDescription, OcProductToCategory, OcProduct, OcProductDescription
 
 
-def get_product_by_category(category_id: int, page: int, limit: int, db: Session):
+def sort_product(query: Query, sort_date: int = None, sort_price: int = None, sort_name: int = None):
+    if sort_date == 1:
+        query = query.order_by(OcProduct.date_added.asc())
+    elif sort_date == -1:
+        query = query.order_by(OcProduct.date_added.desc())
+
+    if sort_price == 1:
+        query = query.order_by(OcProduct.price.asc())
+    elif sort_price == -1:
+        query = query.order_by(OcProduct.price.desc())
+
+    if sort_name == 1:
+        query = query.order_by(OcProduct.model.asc())
+    elif sort_name == -1:
+        query = query.order_by(OcProduct.model.desc())
+    return query
+
+
+def get_product_by_category(category_id: int, page: int, limit: int, db: Session,  sort_date: int = None, sort_price: int = None, sort_name: int = None):
     query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
         .join(OcProductDescription, OcProduct.product_id == OcProductDescription.product_id)\
         .filter(OcProductToCategory.category_id == category_id, OcProduct.status == 1)\
         .order_by(OcProduct.sort_order.asc())\
-        .limit(limit)
 
     if page != 1:
-        return query.offset(page*limit).all()
-    return query.all()
+        query = query.limit(limit).offset(page*limit)
+        sort_query = sort_product(query, sort_date, sort_price, sort_name)
+        return sort_query.all()
+    sort_query = sort_product(query, sort_date, sort_price, sort_name)
+    return sort_query.limit(limit).all()
 
 
 def get_all_categories(db: Session, page: int = None, limit: int = None):
