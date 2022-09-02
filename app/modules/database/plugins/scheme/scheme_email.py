@@ -2,15 +2,22 @@ import re
 from pydantic import BaseModel, EmailStr, validator, Field
 from modules.error.error_data import raise_error
 
-from typing import List, Dict
+from typing import List
+
+
+class OptionFull(BaseModel):
+    name: str
+    value: str
+    price: float
 
 
 class AdvansedOption(BaseModel):
     model: str
     image: str | None = None
+    sum_price: float
     price: float
     count: int
-    option: Dict[str, float]
+    option: List[OptionFull]
 
 
 class EmailSchema(BaseModel):
