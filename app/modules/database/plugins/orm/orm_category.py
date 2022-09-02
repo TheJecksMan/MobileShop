@@ -29,9 +29,9 @@ def get_product_by_category(category_id: int, page: int, limit: int, db: Session
         .order_by(OcProduct.sort_order.asc())\
 
     if page != 1:
-        query = query.limit(limit).offset(page*limit)
         sort_query = sort_product(query, sort_date, sort_price, sort_name)
-        return sort_query.all()
+        return sort_query.limit(limit).offset(page*limit).all()
+
     sort_query = sort_product(query, sort_date, sort_price, sort_name)
     return sort_query.limit(limit).all()
 
@@ -50,12 +50,14 @@ def get_all_categories(db: Session, page: int = None, limit: int = None):
         return query.limit(limit).all()
 
 
-def search_categories(search_text: str, limit: int, db: Session):
+def search_categories(search_text: str, page: int, limit: int, db: Session):
     query = db.query(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategory, OcCategory.category_id == OcCategoryDescription.category_id)\
         .filter(OcCategoryDescription.name.like(f'%{search_text}%'))\
-        .filter(OcCategory.status == 1).limit(limit).all()
-    return query
+        .filter(OcCategory.status == 1)
+    if page != 1:
+        return query.limit(limit).offset(page*limit).all()
+    return query.limit(limit).all()
 
 
 def get_parent_categories(category_id: int, db: Session):

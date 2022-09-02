@@ -41,7 +41,7 @@ def get_product_category(
 
 
 @router.get('/search/{search_text}', response_model=AdvancedCategory)
-def categories_search(search_text: str, limit: int = 5, db: Session = Depends(get_db)):
+def categories_search(search_text: str, page: int = 1, limit: int = 5, db: Session = Depends(get_db)):
     """Поиск по названию категорию"""
-    search_category = orm_category.search_categories(search_text, limit, db)
+    search_category = orm_category.search_categories(search_text, page, limit, db)
     return AdvancedCategory(items=search_category)
