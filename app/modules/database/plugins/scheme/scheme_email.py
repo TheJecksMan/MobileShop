@@ -1,3 +1,4 @@
+from email import message
 import re
 from pydantic import BaseModel, EmailStr, validator, Field
 from modules.error.error_data import raise_error
@@ -20,7 +21,7 @@ class AdvansedOption(BaseModel):
     option: List[OptionFull]
 
 
-class EmailSchema(BaseModel):
+class EmailSchemaOrder(BaseModel):
     fio: str
     phone: str
     email_user: EmailStr
@@ -36,3 +37,32 @@ class EmailSchema(BaseModel):
         if value and not re.search(regex, value, re.I):
             raise_error(400, 'Phone Number Invalid!')
         return value
+
+
+class EmailSchemaAppeal(BaseModel):
+    fio: str
+    phone: str
+    email_user: EmailStr
+    email_recipients: List[EmailStr]
+    theme: str
+    comment: str = Field(max_length=1000)
+
+    @validator("phone")
+    def phone_validation(cls, value):
+        regex = r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$"
+        if value and not re.search(regex, value, re.I):
+            raise_error(400, 'Phone Number Invalid!')
+        return value
+
+
+class BaseOutputEmail(BaseModel):
+    message: str
+
+
+class OutputEmailOrder(BaseOutputEmail):
+    number_order: str
+    UUID: str
+
+
+class OutputEmailAppeal(BaseOutputEmail):
+    number_appeal: str
