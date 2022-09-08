@@ -1,9 +1,10 @@
+"""FastApi"""
 from fastapi import FastAPI
-from core.setting import TITLE, DESCRIPTION, VERSION, CORS_POLICY
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.v1.api import api_router
+from core.setting import TITLE, DESCRIPTION, VERSION, CORS_POLICY
 
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title=TITLE,

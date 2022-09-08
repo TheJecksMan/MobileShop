@@ -1,18 +1,19 @@
-from email import message
+from typing import List
+
 import re
 from pydantic import BaseModel, EmailStr, validator, Field
 from modules.error.error_data import raise_error
 
-from typing import List
-
 
 class OptionFull(BaseModel):
+    """Схема получения комплектации"""
     name: str
     value: str
     price: float
 
 
 class AdvansedOption(BaseModel):
+    """Расширенная схема получения комплектации"""
     model: str
     image: str | None = None
     sum_price: float
@@ -22,6 +23,8 @@ class AdvansedOption(BaseModel):
 
 
 class EmailSchemaOrder(BaseModel):
+    """ Схема валидации для получения информации о заказе
+    """
     fio: str
     phone: str
     email_user: EmailStr
@@ -40,6 +43,8 @@ class EmailSchemaOrder(BaseModel):
 
 
 class EmailSchemaAppeal(BaseModel):
+    """ Схема валидации для отправки обращения
+    """
     fio: str
     phone: str
     email_user: EmailStr

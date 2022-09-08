@@ -1,5 +1,6 @@
+"""FastApi"""
 from fastapi import APIRouter
-from .endpoint import product, category, mail
+from api.v1.endpoint import product, category, mail
 
 
 api_router = APIRouter()

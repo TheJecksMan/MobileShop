@@ -1,4 +1,6 @@
+"""FastaPI"""
 from fastapi import APIRouter, Depends
+
 from sqlalchemy.orm import Session
 from modules.database.deps import get_db
 
@@ -10,16 +12,16 @@ router = APIRouter()
 
 
 @router.get("/all", response_model=AdvancedCategory)
-def get_all_categories(page: int = None, limit: int = None, db: Session = Depends(get_db)):
+def get_all_categories(page: int = None, limit: int = None, db_session: Session = Depends(get_db)):
     """Получение списка всех доступный родительских катологов"""
-    category = orm_category.get_all_categories(db, page, limit)
+    category = orm_category.get_all_categories(db_session, page, limit)
     return AdvancedCategory(items=category)
 
 
 @router.get("/parent/{category_id}")
-def get_parent_categories(category_id: int, db: Session = Depends(get_db)):
+def get_parent_categories(category_id: int, db_session: Session = Depends(get_db)):
     """Получение информации о доступных подгатегориях"""
-    parent_categories = orm_category.get_parent_categories(category_id, db)
+    parent_categories = orm_category.get_parent_categories(category_id, db_session)
     return parent_categories
 
 
@@ -27,7 +29,7 @@ def get_parent_categories(category_id: int, db: Session = Depends(get_db)):
 def get_product_category(
     category_id: int, page: int, limit: int = 10,
     sort_date: int = None, sort_price: int = None, sort_name: int = None,
-    db: Session = Depends(get_db)
+    db_session: Session = Depends(get_db)
 ):
     """Получения всего списка товаров из категории
     ----
@@ -36,12 +38,16 @@ def get_product_category(
     1 -  по возрастанию
     """
     category_product = orm_category.get_product_by_category(
-        category_id, page, limit, db, sort_date, sort_price, sort_name)
+        category_id, page, limit, db_session, sort_date, sort_price, sort_name)
     return AdvancedProduct(items=category_product)
 
 
 @router.get('/search/{search_text}', response_model=AdvancedCategory)
-def categories_search(search_text: str, page: int = 1, limit: int = 5, db: Session = Depends(get_db)):
+def categories_search(
+    search_text: str,
+    page: int = 1, limit: int = 5,
+    db_session: Session = Depends(get_db)
+):
     """Поиск по названию категорию"""
-    search_category = orm_category.search_categories(search_text, page, limit, db)
+    search_category = orm_category.search_categories(search_text, page, limit, db_session)
     return AdvancedCategory(items=search_category)
