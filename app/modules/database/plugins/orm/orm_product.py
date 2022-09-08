@@ -57,10 +57,11 @@ def get_all_product(page: int, limit: int, db: Session):
 
 
 def search_product(category_id: int, search_text: str, page: int, limit: int, db: Session):
-    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, )\
-        .filter(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)
+    query = db.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
+        .filter(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)\
+        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
     if category_id != None:
-        query.join(OcProductToCategory, OcProductToCategory.category_id == category_id)
+        query = query.join(OcProductToCategory, OcProductToCategory.category_id == category_id)
     if page != 1:
         return query.limit(limit).offset(page*limit).all()
     return query.limit(limit).all()

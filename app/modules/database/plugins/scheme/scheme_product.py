@@ -52,7 +52,7 @@ class MultipleProduct(BaseModel):
 
 
 class AdvancedSearchProduct(BaseModel):
-    items: List[BaseProduct]
+    items: List[PopularProduct]
 
 
 class FilterName(BaseModel):
