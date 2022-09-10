@@ -1,10 +1,20 @@
 version: '3.4'
 
 services:
-  magazinemobile:
+  magazine_mobile:
     image: magazine_mobile
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - 80:80
+    environment:
+      - database_username=root
+      - database_password=password_12345
+      - database_ip=localhost
+      - database_name=magazine
+      - mail_username=domaintestsmtp
+      - mail_password=dN7Q4*WsZTG!RzU
+      - mail_from=domaintestsmtp@rambler.ru
+      - mail_port=465
+      - mail_server=smtp.rambler.ru
