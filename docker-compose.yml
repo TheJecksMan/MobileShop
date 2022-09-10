@@ -1,21 +1,44 @@
 version: '3.4'
 
 services:
-  magazine_mobile:
+  web:
     image: magazine_mobile
     restart: always
     build:
       context: .
-      dockerfile: ./Dockerfile
-    ports:
-      - 80:80
+      dockerfile: ./Dockerfile.prod
+    expose:
+      - 80
     environment:
       - database_username=u1346925_mobile
       - database_password=wO_2iI2pE9d!
       - database_ip=31.31.196.208
       - database_name=u1346925_mebel
-      - mail_username=domaintestsmtp
-      - mail_password=dN7Q4*WsZTG!RzU
-      - mail_from=domaintestsmtp@rambler.ru
+      - mail_username=info@mobile.massive-mebel.ru
+      - mail_password=vQ7vR9!oT2e
+      - mail_from=info@mobile.massive-mebel.ru
       - mail_port=465
-      - mail_server=smtp.rambler.ru
+      - mail_server=mail.mobile.massive-mebel.ru
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fastapi.rule=Host(`mobile.massive-mebel.ru`)"
+      - "traefik.http.routers.fastapi.tls=true"
+      - "traefik.http.routers.fastapi.tls.certresolver=letsencrypt"
+  
+  traefik:
+    build:
+      context: .
+      dockerfile: Dockerfile.traefik
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik-certificates:/certificates"
+    labels:
+      - "traefik.http.routers.dashboard.rule=Host(`dashboard-fastapi-traefik.massive-mebel.ru`)"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+
+volumes:
+  traefik-certificates:
