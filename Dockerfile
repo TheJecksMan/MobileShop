@@ -7,6 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt .
+RUN apt-get update && apt-get install -y python3-dev default-libmysqlclient-dev build-essential
 RUN python -m pip install -r requirements.txt
 
 WORKDIR /app

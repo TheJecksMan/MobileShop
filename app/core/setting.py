@@ -15,11 +15,11 @@ DATABASE_NAME: str = os.environ["database_name"]
 SQLALCHEMY_DATABASE_URL: str = f"mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_IP}/{DATABASE_NAME}"
 
 CONF = ConnectionConfig(
-    MAIL_USERNAME="domaintestsmtp" | os.environ["mail_username"],
-    MAIL_PASSWORD="dN7Q4*WsZTG!RzU" | os.environ["mail_password"],
-    MAIL_FROM="domaintestsmtp@rambler.ru" | os.environ["mail_from"],
+    MAIL_USERNAME=os.environ["mail_username"],
+    MAIL_PASSWORD=os.environ["mail_password"],
+    MAIL_FROM=os.environ["mail_from"],
     MAIL_PORT=os.environ["mail_port"],
-    MAIL_SERVER=os.environ["smtp.rambler.ru"],
+    MAIL_SERVER=os.environ["mail_server"],
     MAIL_SSL=True,
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
