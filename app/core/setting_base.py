@@ -2,6 +2,9 @@
 from pathlib import Path
 from fastapi_mail import ConnectionConfig
 
+TITLE: str = 'Mobile API Service'
+DESCRIPTION: str = 'Mobile API Service - служит сервисом для мобильного приложения. Получение данных от CMS OpenCard.'
+VERSION: str = '0.6.0'
 
 DATABASE_USERNAME: str = "user"
 DATABASE_PASSWORD: str = "Dmitry_321011"
