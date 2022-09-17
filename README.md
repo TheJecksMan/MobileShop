@@ -18,7 +18,7 @@ Back-end для мобильной версии сайта
 **Linux**
 1. Склонируйте репозиторий `git clone <repository>`
 2. Перейти в папку с репозиторием
-3. Настройте переменные для подключения к основным компонентам сервера:
+3. Настройте переменные [docker-compose.yml](https://github.com/TheJecksMan/MobileShop/blob/master/docker-compose.yml) для подключения к основным компонентам сервера:
 ```Docker
 environment:
       - database_username=u1346925_mobile # Имя пользователя БД
