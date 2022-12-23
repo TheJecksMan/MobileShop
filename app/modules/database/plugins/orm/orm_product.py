@@ -10,84 +10,124 @@ from modules.database.plugins.models import (
     OcProductOptionValue
 )
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from modules.error.error_data import raise_error
 
 
-def get_product_by_id(product_id: int, db_session: Session):
+async def get_product_by_id(product_id: int, db_session: AsyncSession):
     """Получение продукта по идентификатору в базе данных"""
-    query = db_session.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProduct.quantity, OcStockStatu.name)\
-        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)\
-        .filter(OcProduct.product_id == product_id).first()
-
-    if not query:
+    result = await db_session.execute(
+        select(OcProduct.product_id, OcProduct.model, OcProduct.image,
+               OcProduct.price, OcProduct.quantity, OcStockStatu.name)
+        .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)
+        .filter(OcProduct.product_id == product_id)
+    )
+    result = result.first()
+    if not result:
         raise_error(404, "Not Found!")
-    return query
+    return result
 
 
-def get_multiple_product_by_id(products_ids: List[int], db_session: Session):
+async def get_multiple_product_by_id(products_ids: List[int], db_session: AsyncSession):
     """Получение информации о нескольких продуктов по идентификатору в базе данных"""
-    query = db_session.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
-        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
-        .filter(OcProduct.product_id.in_(products_ids),  OcProduct.status == 1).all()
-    if not query:
-        raise_error(404)
-    return query
-
-
-def get_product_description_by_id(product_id: int, db_session: Session):
-    """Получение подробного описания по идентификатору продукта"""
-    query = db_session.query(OcProductDescription.description)\
-        .filter(OcProductDescription.product_id == product_id).first()
-    return query
-
-
-def get_popular_product(limit: int, db_session: Session):
-    """Получение списка самых просматривемых товаров из базы данных"""
-    query = db_session.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
-        .filter(OcProduct.status == 1)\
-        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
-        .order_by(OcProduct.viewed.desc()).limit(limit).all()
-    return query
-
-
-def get_all_product(page: int, limit: int, db_session: Session):
-    """Получение списка всех продуктов из базы данных. (Почти не используется)"""
-    query = db_session.query(OcProduct.product_id, OcProduct.image, OcProduct.price)\
-        .filter(OcProduct.status == 1).limit(limit)
-    if page != 1:
-        return query.offset(page*limit).all()
-    return query.all()
-
-
-def search_product(category_id: int, search_text: str, page: int, limit: int, db_session: Session):
-    """Поиск товара в базе данных по полученному тексту"""
-    query = db_session.query(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
-        .filter(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)\
+    result = await db_session.execute(
+        select(OcProduct.product_id, OcProduct.model, OcProduct.image,
+               OcProduct.price, OcProductDescription.description)
         .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
+        .where(OcProduct.product_id.in_(products_ids), OcProduct.status == 1)
+    )
+    result = result.all()
+    if not result:
+        raise_error(404)
+    return result
+
+
+async def get_product_description_by_id(product_id: int, db_session: AsyncSession):
+    """Получение подробного описания по идентификатору продукта"""
+    result = await db_session.execute(
+        select(OcProductDescription.description)
+        .where(OcProductDescription.product_id == product_id)
+    )
+    result = result.first()
+    if not result:
+        raise_error(404)
+    return result
+
+
+async def get_popular_product(limit: int, db_session: AsyncSession):
+    """Получение списка самых просматривемых товаров из базы данных"""
+    try:
+        result = await db_session.execute(
+            select(OcProduct.product_id, OcProduct.model, OcProduct.image,
+                   OcProduct.price, OcProductDescription.description)
+            .where(OcProduct.status == 1)
+            .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
+            .order_by(OcProduct.viewed.desc())
+            .limit(limit)
+        )
+    except:
+        raise_error(404)
+    return result.all()
+
+
+async def get_all_product(page: int, limit: int, db_session: AsyncSession):
+    """Получение списка всех продуктов из базы данных. (Почти не используется)"""
+    result = await db_session.execute(
+        select(OcProduct.product_id, OcProduct.image, OcProduct.price)
+        .where(OcProduct.status == 1)
+        .limit(limit)
+    )
+    if page != 1:
+        try:
+            return result.offset(page*limit).all()
+        except:
+            raise_error(404)
+    return result.all()
+
+
+async def search_product(category_id: int, search_text: str, page: int, limit: int, db_session: AsyncSession):
+    """Поиск товара в базе данных по полученному тексту"""
+    query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
+        .where(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)\
+        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
+
+    result = await db_session.execute(query)
     if category_id is not None:
         query = query.join(OcProductToCategory, OcProductToCategory.category_id == category_id)
+        result = await db_session.execute(query)
     if page != 1:
-        return query.limit(limit).offset(page*limit).all()
-    return query.limit(limit).all()
+        query = query.limit(limit).offset(page*limit)
+        try:
+            result = await db_session.execute(query)
+            return result.all()
+        except:
+            raise_error(404)
+    query = query.limit(limit)
+    result = await db_session.execute(query)
+    return result.all()
 
 
-def get_params_option(db_session: Session):
+async def get_params_option(db_session: AsyncSession):
     """Получение глобальных фильтров из базы данных"""
-    query_name = db_session.query(OcOptionDescription.option_id, OcOptionDescription.name).all()
-    query_params = db_session.query(OcOptionValueDescription.option_id, OcOptionValueDescription.name).all()
-    return query_name, query_params
+    result_name = await db_session.execute(
+        select(OcOptionDescription.option_id, OcOptionDescription.name)
+    )
+    result_params = await db_session.execute(select(OcOptionValueDescription.option_id, OcOptionValueDescription.name))
+    return result_name.all(), result_params.all()
 
 
-def get_equipment(product_id: int, db_session: Session):
+async def get_equipment(product_id: int, db_session: AsyncSession):
     """Получение комплектации по идентификатору товара"""
-    query = db_session.query(
-        OcOptionValueDescription.name,
-        OcOptionDescription.name.label('type'), OcProductOptionValue.product_id,
-        OcProductOptionValue.quantity, OcProductOptionValue.price, OcProductOptionValue.price_prefix,
-        OcProductOptionValue.points, OcProductOptionValue.points_prefix, OcProductOptionValue.weight,
-        OcProductOptionValue.weight_prefix)\
-        .filter(OcProductOptionValue.product_id == product_id)\
-        .join(OcOptionValueDescription, OcOptionValueDescription.option_value_id == OcProductOptionValue.option_value_id)\
-        .join(OcOptionDescription, OcOptionDescription.option_id == OcProductOptionValue.option_id).all()
-    return query
+    result = await db_session.execute(
+        select(OcOptionValueDescription.name,
+               OcOptionDescription.name.label('type'), OcProductOptionValue.product_id,
+               OcProductOptionValue.quantity, OcProductOptionValue.price, OcProductOptionValue.price_prefix,
+               OcProductOptionValue.points, OcProductOptionValue.points_prefix, OcProductOptionValue.weight,
+               OcProductOptionValue.weight_prefix)
+        .where(OcProductOptionValue.product_id == product_id)
+        .join(OcOptionValueDescription, OcOptionValueDescription.option_value_id == OcProductOptionValue.option_value_id)
+        .join(OcOptionDescription, OcOptionDescription.option_id == OcProductOptionValue.option_id)
+    )
+    return result.all()

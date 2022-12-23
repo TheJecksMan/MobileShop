@@ -1,7 +1,8 @@
-fastapi[all]
+fastapi
 uvicorn[standard]
-SQLAlchemy
+SQLAlchemy[asyncio]
 cryptography
 gunicorn
 mysqlclient
 fastapi-mail
+asyncmy

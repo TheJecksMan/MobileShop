@@ -1,12 +1,8 @@
 """Sessions"""
-from typing import Generator
-from .engine import SessionLocal
+from .async_engine import async_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
-def get_db() -> Generator:
-    """ Получение сессии базы данных"""
-    try:
-        db_session = SessionLocal()
-        yield db_session
-    finally:
-        db_session.close()
+async def get_session() -> AsyncSession:
+    async with async_session() as session:
+        yield session
