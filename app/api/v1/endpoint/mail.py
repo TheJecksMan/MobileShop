@@ -8,6 +8,8 @@ from modules.database.plugins.scheme import scheme_email
 from fastapi_mail import FastMail, MessageSchema
 from fastapi.responses import UJSONResponse
 
+from typing import Any
+
 from core.setting import CONF
 
 
@@ -15,8 +17,10 @@ router = APIRouter()
 
 
 @router.post("/send/order", response_class=UJSONResponse, response_model=scheme_email.OutputEmailOrder)
-async def send_order_by_email(item: scheme_email.EmailSchemaOrder):
-    """Отправка заказа операторам по почтовому адресу"""
+async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
+    """
+    Отправка заказа операторам по почтовому адресу
+    """
     NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
     uuid_order = str(uuid.uuid4())
@@ -50,8 +54,10 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder):
 
 
 @router.post("/send/appeal", response_class=UJSONResponse, response_model=scheme_email.OutputEmailAppeal)
-async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal):
-    """Отправка обращения пользователя оператору по почте"""
+async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal) -> Any:
+    """
+    Отправка обращения пользователя оператору по почте
+    """
     NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
     random_appeal = ''.join(random.choice(chars) for _ in range(NUMBER_LEN))
