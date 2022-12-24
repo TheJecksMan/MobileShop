@@ -1,7 +1,8 @@
-fastapi[all]
-uvicorn[standard]
-SQLAlchemy
-cryptography
-gunicorn
-mysqlclient
-fastapi-mail
+fastapi==0.88.0
+uvicorn[standard]==0.20.0
+SQLAlchemy[asyncio]==1.4.45
+cryptography==38.0.4
+gunicorn==20.1.0
+mysqlclient==2.1.1
+fastapi-mail==1.1.5
+asyncmy==0.2.5
