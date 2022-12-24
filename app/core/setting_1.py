@@ -14,6 +14,8 @@ DATABASE_NAME: str = os.environ["database_name"]
 
 SQLALCHEMY_DATABASE_URL: str = f"mysql+asyncmy://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_IP}/{DATABASE_NAME}"
 
+DEV_MODE: bool = os.environ["dev_mode"]
+
 CONF = ConnectionConfig(
     MAIL_USERNAME=os.environ["mail_username"],
     MAIL_PASSWORD=os.environ["mail_password"],

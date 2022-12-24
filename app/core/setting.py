@@ -1,5 +1,6 @@
 """Settings base"""
 from pathlib import Path
+import os
 from fastapi_mail import ConnectionConfig
 
 TITLE: str = 'Mobile API Service'
@@ -10,6 +11,8 @@ DATABASE_USERNAME: str = "u1346925_test"
 DATABASE_PASSWORD: str = "kV7fK9cJ6t"
 DATABASE_IP: str = "31.31.196.208"
 DATABASE_NAME: str = "u1346925_mebel"
+
+DEV_MODE: bool = True
 
 SQLALCHEMY_ASYNC_DATABASE_URL: str = f"mysql+asyncmy://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_IP}/{DATABASE_NAME}"
 
