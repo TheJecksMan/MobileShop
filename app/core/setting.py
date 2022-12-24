@@ -1,6 +1,5 @@
 """Settings base"""
 from pathlib import Path
-import os
 from fastapi_mail import ConnectionConfig
 
 TITLE: str = 'Mobile API Service'
