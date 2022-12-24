@@ -1,21 +1,18 @@
 """FastApi"""
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from api.v1.api import api_router
-from core.setting import TITLE, DESCRIPTION, VERSION, DEV_MODE
+from core.setting import TITLE, DESCRIPTION, VERSION
 
 
-if DEV_MODE:
-    app = FastAPI()
-else:
-    app = FastAPI(
-        title=TITLE,
-        description=DESCRIPTION,
-        version=VERSION,
-        openapi_url=None
-    )
+app = FastAPI(
+    title=TITLE,
+    description=DESCRIPTION,
+    version=VERSION,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,3 +23,8 @@ app.add_middleware(
 app.add_middleware(GZipMiddleware, minimum_size=800)
 
 app.include_router(api_router, prefix='/api')
+
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse("static/favicon.ico")

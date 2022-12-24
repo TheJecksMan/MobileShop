@@ -28,7 +28,7 @@ async def get_product_by_id(product_id: int, db_session: AsyncSession):
     )
     result = result.first()
     if not result:
-        raise_error(404, "Not Found!")
+        raise_error(400)
     return result
 
 
@@ -44,7 +44,7 @@ async def get_multiple_product_by_id(products_ids: List[int], db_session: AsyncS
     )
     result = result.all()
     if not result:
-        raise_error(404)
+        raise_error(400)
     return result
 
 
@@ -76,7 +76,7 @@ async def get_popular_product(limit: int, db_session: AsyncSession):
             .limit(limit)
         )
     except:
-        raise_error(404, "Not Found!")
+        raise_error(400)
     return result.all()
 
 
@@ -88,13 +88,12 @@ async def get_all_product(page: int, limit: int, db_session: AsyncSession):
         .where(OcProduct.status == 1)\
         .limit(limit)
 
-    result = await db_session.execute(query)
     if page != 1:
-        try:
-            query = query.offset(page*limit)
-            result = await db_session.execute(query)
-        except:
-            raise_error(404, "Not Found!")
+        query = query.offset(page*limit)
+    try:
+        result = await db_session.execute(query)
+    except:
+        raise_error(400)
     return result.all()
 
 
@@ -116,7 +115,7 @@ async def search_product(category_id: int, search_text: str, page: int, limit: i
             result = await db_session.execute(query)
             return result.all()
         except:
-            raise_error(404, "Not Found!")
+            raise_error(400)
 
     query = query.limit(limit)
     result = await db_session.execute(query)

@@ -19,7 +19,6 @@ services:
       - mail_from=info@mobile.massive-mebel.ru
       - mail_port=465
       - mail_server=mail.mobile.massive-mebel.ru
-      - dev_mode=false
 
     labels:
       - "traefik.enable=true"

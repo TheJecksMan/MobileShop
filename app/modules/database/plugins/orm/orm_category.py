@@ -29,7 +29,9 @@ async def get_product_by_category(
     category_id: int, page: int, limit: int, db_session: AsyncSession,
     sort_date: int = None, sort_price: int = None, sort_name: int = None
 ):
-    """Получение списка товаров по идентификатору категории"""
+    """
+    Получение списка товаров по идентификатору категории
+    """
     query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
         .join(OcProductDescription, OcProduct.product_id == OcProductDescription.product_id)\
@@ -44,12 +46,14 @@ async def get_product_by_category(
     try:
         result = await db_session.execute(sort_query)
     except:
-        raise_error(404)
+        raise_error(400)
     return result.all()
 
 
 async def get_all_categories(db_session: AsyncSession, page: int, limit: int):
-    """Получение полного списка категорий из базы данных"""
+    """
+    Получение полного списка категорий из базы данных
+    """
     query = select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategoryDescription, OcCategory.category_id == OcCategoryDescription.category_id)\
         .where(OcCategory.status == 1, OcCategory.parent_id == 0)\
@@ -67,27 +71,33 @@ async def get_all_categories(db_session: AsyncSession, page: int, limit: int):
     try:
         result = await db_session.execute(query)
     except:
-        raise_error(404)
+        raise_error(400)
     return result.all()
 
 
 async def search_categories(search_text: str, page: int, limit: int, db_session: AsyncSession):
-    """Поиск категорий по базе данных"""
+    """
+    Поиск категорий по базе данных
+    """
     query = select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategory, OcCategory.category_id == OcCategoryDescription.category_id)\
         .where(OcCategoryDescription.name.like(f'%{search_text}%'), OcCategory.status == 1)
 
     if page != 1:
         query = query.limit(limit).offset(page*limit)
+    else:
+        query = query.limit(limit)
+    try:
         result = await db_session.execute(query)
-        return result.all()
-    query = query.limit(limit)
-    result = await db_session.execute(query)
+    except:
+        raise_error(400)
     return result.all()
 
 
 async def get_parent_categories(category_id: int, db_session: AsyncSession):
-    """Получение подкатегорий по идентификатору категории"""
+    """
+    Получение подкатегорий по идентификатору категории
+    """
 
     result = await db_session.execute(
         select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)
