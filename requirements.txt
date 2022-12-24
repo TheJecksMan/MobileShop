@@ -6,3 +6,4 @@ gunicorn==20.1.0
 mysqlclient==2.1.1
 fastapi-mail==1.1.5
 asyncmy==0.2.5
+orjson
