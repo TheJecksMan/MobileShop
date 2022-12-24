@@ -12,6 +12,7 @@ app = FastAPI(
     title=TITLE,
     description=DESCRIPTION,
     version=VERSION,
+    openapi_url=None
 )
 
 app.add_middleware(
