@@ -13,7 +13,7 @@ from fastapi.responses import ORJSONResponse
 
 from typing import Any
 
-from core.setting import CONF
+from core.setting import CONF, NUMBER_LEN_ORDER, RECIPIENT_LIST
 
 
 router = APIRouter()
@@ -24,10 +24,9 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
     """
     Отправка заказа операторам по почтовому адресу
     """
-    NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
     uuid_order = str(uuid.uuid4())
-    random_order = ''.join(random.choice(chars) for _ in range(NUMBER_LEN))
+    random_order = ''.join(random.choice(chars) for _ in range(NUMBER_LEN_ORDER))
 
     email_template = {
         "order_id": random_order,
@@ -43,7 +42,7 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
 
     message = MessageSchema(
         subject=f"[Mobile] Заказ #{random_order}",
-        recipients=item.dict().get("email_recipients"),
+        recipients=RECIPIENT_LIST,
         template_body=email_template
     )
 
@@ -76,7 +75,7 @@ async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal) -> Any:
 
     message = MessageSchema(
         subject=f"[Mobile] Обращение #{random_appeal}",
-        recipients=item.dict().get("email_recipients"),
+        recipients=RECIPIENT_LIST,
         template_body=email_template
     )
 
