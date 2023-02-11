@@ -7,12 +7,10 @@ from fastapi.middleware.gzip import GZipMiddleware
 from api.v1.api import api_router
 from core.setting import TITLE, DESCRIPTION, VERSION
 
-
 app = FastAPI(
     title=TITLE,
     description=DESCRIPTION,
-    version=VERSION,
-    openapi_url=None
+    version=VERSION
 )
 
 app.add_middleware(

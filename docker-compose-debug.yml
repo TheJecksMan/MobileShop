@@ -11,9 +11,6 @@ services:
       - 80
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`<domain>`)"
-      - "traefik.http.routers.fastapi.tls=true"
-      - "traefik.http.routers.fastapi.tls.certresolver=letsencrypt"
   
   traefik:
     restart: always

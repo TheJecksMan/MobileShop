@@ -1,3 +1,7 @@
+"""
+API implementation module for product.
+/api/product
+"""
 from fastapi import APIRouter, Depends
 from typing import Any
 
@@ -21,6 +25,7 @@ async def get_detail_product(
     """
     base_product = await orm_product.get_product_by_id(product_id, db_session)
     base_desc = await orm_product.get_product_description_by_id(product_id, db_session)
+
     desc = scheme.DetailProduct(
         product_id=base_product.product_id,
         model=base_product.model,
@@ -33,7 +38,7 @@ async def get_detail_product(
     return scheme.AdvancedDetailProduct(item=desc)
 
 
-@router.get("/equipment/{product_id}")
+@router.get("/equipment/{product_id}", response_model=list[scheme.BaseProductEquipment])
 async def get_equipment_product(
         product_id: int,
         db_session: AsyncSession = Depends(get_session)
@@ -71,7 +76,7 @@ async def get_product_description(
     return product
 
 
-@router.get("/page/{page}")
+@router.get("/page/{page}", response_model=list[scheme.BaseProductCategory])
 async def get_product_category(
     page: int,
     limit: int = 10,
@@ -109,7 +114,7 @@ async def get_popular_product(
     return scheme.AdvancedPopularProduct(items=product)
 
 
-@router.get("/filter/all")
+@router.get("/filter/all", response_model=scheme.FilterGeneral)
 async def get_all_param_filter(db_session: AsyncSession = Depends(get_session)) -> Any:
     """
     Получение полного списка доступных параметров для последующей фильтрации

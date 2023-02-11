@@ -1,8 +1,11 @@
+"""
+API implementation module for send mail.
+/api/mail
+"""
 import uuid
 import string
 import random
 
-"""FastApi"""
 from fastapi import APIRouter
 from modules.database.plugins.scheme import scheme_email
 from fastapi_mail import FastMail, MessageSchema
@@ -49,7 +52,7 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
     return ORJSONResponse(status_code=200, content={
         "message": "Сообщение отправлено.\nМы скоро свяжемся с Вами!",
         "number_order": str(random_order),
-        "UUID": str(uuid.uuid4())
+        "UUID": uuid_order
     })
 
 
