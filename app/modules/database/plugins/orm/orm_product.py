@@ -1,5 +1,5 @@
+"""ORM"""
 from typing import List
-"""Models"""
 from modules.database.plugins.models import (
     OcProduct,
     OcProductDescription,
@@ -24,7 +24,7 @@ async def get_product_by_id(product_id: int, db_session: AsyncSession):
         select(OcProduct.product_id, OcProduct.model, OcProduct.image,
                OcProduct.price, OcProduct.quantity, OcStockStatu.name)
         .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)
-        .filter(OcProduct.product_id == product_id)
+        .where(OcProduct.product_id == product_id)
     )
     result = result.first()
     if not result:
@@ -70,8 +70,8 @@ async def get_popular_product(limit: int, db_session: AsyncSession):
         result = await db_session.execute(
             select(OcProduct.product_id, OcProduct.model, OcProduct.image,
                    OcProduct.price, OcProductDescription.description)
-            .where(OcProduct.status == 1)
             .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
+            .where(OcProduct.status == 1)
             .order_by(OcProduct.viewed.desc())
             .limit(limit)
         )
@@ -101,24 +101,24 @@ async def search_product(category_id: int, search_text: str, page: int, limit: i
     """
     Поиск товара в базе данных по полученному тексту
     """
-    query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description, OcProductToCategory.category_id)\
-        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)\
-        .where(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)
+    query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
+        .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
 
     if category_id is not None:
         query = query.join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
             .where(OcProductToCategory.category_id == category_id)
+    query = query.where(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)
 
-    if page != 1:
-        query = query.limit(limit).offset(page*limit)
-        try:
+    try:
+        if page != 1:
+            query = query.limit(limit).offset(page*limit)
             result = await db_session.execute(query)
-            return result.all()
-        except:
-            raise_error(400)
+        else:
+            query = query.limit(limit)
+            result = await db_session.execute(query)
 
-    query = query.limit(limit)
-    result = await db_session.execute(query)
+    except:
+        raise_error(400)
     return result.all()
 
 
@@ -140,13 +140,13 @@ async def get_equipment(product_id: int, db_session: AsyncSession):
     Получение комплектации по идентификатору товара
     """
     result = await db_session.execute(
-        select(OcOptionValueDescription.name,
-               OcOptionDescription.name.label('type'), OcProductOptionValue.product_id,
-               OcProductOptionValue.quantity, OcProductOptionValue.price, OcProductOptionValue.price_prefix,
-               OcProductOptionValue.points, OcProductOptionValue.points_prefix, OcProductOptionValue.weight,
-               OcProductOptionValue.weight_prefix)
-        .where(OcProductOptionValue.product_id == product_id)
+        select(OcOptionValueDescription.name, OcOptionDescription.name.label('type'),
+               OcProductOptionValue.product_id, OcProductOptionValue.quantity,
+               OcProductOptionValue.price, OcProductOptionValue.price_prefix,
+               OcProductOptionValue.points, OcProductOptionValue.points_prefix,
+               OcProductOptionValue.weight, OcProductOptionValue.weight_prefix)
         .join(OcOptionValueDescription, OcOptionValueDescription.option_value_id == OcProductOptionValue.option_value_id)
         .join(OcOptionDescription, OcOptionDescription.option_id == OcProductOptionValue.option_id)
+        .where(OcProductOptionValue.product_id == product_id)
     )
     return result.all()

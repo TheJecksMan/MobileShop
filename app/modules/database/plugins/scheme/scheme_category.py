@@ -7,9 +7,21 @@ class DetailCategory(BaseModel):
     image: str
     name: str
 
+    class Config:
+        orm_mode = True
+
 
 class AdvancedCategory(BaseModel):
     items: List[DetailCategory]
+
+
+class ParentCategory(BaseModel):
+    category_id: int
+    image: str
+    name: str
+
+    class Config:
+        orm_mode = True
 
 
 class DetailProduct(BaseModel):
@@ -18,6 +30,9 @@ class DetailProduct(BaseModel):
     image: str
     price: float
     description: str
+
+    class Config:
+        orm_mode = True
 
 
 class AdvancedProduct(BaseModel):

@@ -1,6 +1,6 @@
 from sqlalchemy import CHAR, Column, DECIMAL, Date, DateTime, Enum, Float, Index, Integer, SmallInteger, String, Table, Text, text
 from sqlalchemy.dialects.mysql import INTEGER, LONGTEXT, MEDIUMTEXT, TEXT, TINYINT, VARCHAR
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 metadata = Base.metadata

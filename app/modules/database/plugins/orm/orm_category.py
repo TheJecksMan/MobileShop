@@ -1,13 +1,12 @@
-"""Models"""
+"""ORM"""
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session, Query
 from sqlalchemy import select
 
 from modules.error.error_data import raise_error
 from modules.database.plugins.models import OcCategory, OcCategoryDescription, OcProductToCategory, OcProduct, OcProductDescription
 
 
-def sort_product(query, sort_date: int = None, sort_price: int = None, sort_name: int = None):
+def _sort_product(query, sort_date: int = None, sort_price: int = None, sort_name: int = None):
     if sort_date == 1:
         query = query.order_by(OcProduct.date_added.asc())
     elif sort_date == -1:
@@ -39,9 +38,9 @@ async def get_product_by_category(
         .order_by(OcProduct.sort_order.asc())
 
     if page != 1:
-        sort_query = sort_product(query, sort_date, sort_price, sort_name).limit(limit).offset(page*limit)
+        sort_query = _sort_product(query, sort_date, sort_price, sort_name).limit(limit).offset(page*limit)
     else:
-        sort_query = sort_product(query, sort_date, sort_price, sort_name).limit(limit)
+        sort_query = _sort_product(query, sort_date, sort_price, sort_name).limit(limit)
 
     try:
         result = await db_session.execute(sort_query)
@@ -98,10 +97,10 @@ async def get_parent_categories(category_id: int, db_session: AsyncSession):
     """
     Получение подкатегорий по идентификатору категории
     """
-
     result = await db_session.execute(
         select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)
-        .where(OcCategory.status == 1, OcCategory.parent_id != 0, OcCategory.category_id == category_id)
+        .join(OcCategoryDescription, OcCategoryDescription.category_id == OcCategory.category_id)
+        .where(OcCategory.status == 1, OcCategory.parent_id != 0, OcCategory.parent_id == category_id)
         .order_by(OcCategory.sort_order.asc())
     )
     return result.all()
