@@ -1,16 +1,20 @@
+"""
+API implementation module for send mail.
+/api/mail
+"""
 import uuid
 import string
 import random
 
-"""FastApi"""
-from fastapi import APIRouter
-from modules.database.plugins.scheme import scheme_email
-from fastapi_mail import FastMail, MessageSchema
-from fastapi.responses import ORJSONResponse
-
 from typing import Any
 
-from core.setting import CONF
+from fastapi import APIRouter
+from fastapi.responses import ORJSONResponse
+from fastapi_mail import FastMail, MessageSchema
+
+from modules.database.plugins.scheme import scheme_email
+
+from core.setting import CONF, NUMBER_LEN_ORDER, RECIPIENT_LIST
 
 
 router = APIRouter()
@@ -21,10 +25,9 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
     """
     Отправка заказа операторам по почтовому адресу
     """
-    NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
     uuid_order = str(uuid.uuid4())
-    random_order = ''.join(random.choice(chars) for _ in range(NUMBER_LEN))
+    random_order = ''.join(random.choice(chars) for _ in range(NUMBER_LEN_ORDER))
 
     email_template = {
         "order_id": random_order,
@@ -40,7 +43,7 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
 
     message = MessageSchema(
         subject=f"[Mobile] Заказ #{random_order}",
-        recipients=item.dict().get("email_recipients"),
+        recipients=RECIPIENT_LIST,
         template_body=email_template
     )
 
@@ -49,7 +52,7 @@ async def send_order_by_email(item: scheme_email.EmailSchemaOrder) -> Any:
     return ORJSONResponse(status_code=200, content={
         "message": "Сообщение отправлено.\nМы скоро свяжемся с Вами!",
         "number_order": str(random_order),
-        "UUID": str(uuid.uuid4())
+        "UUID": uuid_order
     })
 
 
@@ -58,9 +61,8 @@ async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal) -> Any:
     """
     Отправка обращения пользователя оператору по почте
     """
-    NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
-    random_appeal = ''.join(random.choice(chars) for _ in range(NUMBER_LEN))
+    random_appeal = ''.join(random.choice(chars) for _ in range(NUMBER_LEN_ORDER))
 
     email_template = {
         "appeal_id": random_appeal,
@@ -73,7 +75,7 @@ async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal) -> Any:
 
     message = MessageSchema(
         subject=f"[Mobile] Обращение #{random_appeal}",
-        recipients=item.dict().get("email_recipients"),
+        recipients=RECIPIENT_LIST,
         template_body=email_template
     )
 

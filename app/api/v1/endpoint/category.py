@@ -1,18 +1,21 @@
-"""FastaPI"""
-from fastapi import APIRouter, Depends
+"""
+API implementation module for categories.
+/api/caregories
+"""
 from typing import Any
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from modules.database.deps import get_session
 
 from modules.database.plugins.orm import orm_category
-from modules.database.plugins.scheme.scheme_category import AdvancedCategory, AdvancedProduct
+from modules.database.plugins.scheme import scheme_category as scheme
 
 
 router = APIRouter()
 
 
-@router.get("/all", response_model=AdvancedCategory)
+@router.get("/all", response_model=scheme.AdvancedCategory)
 async def get_all_categories(
     page: int = None,
     limit: int = None,
@@ -21,11 +24,11 @@ async def get_all_categories(
     """
     Получение списка всех доступный родительских катологов
     """
-    category = await orm_category.get_all_categories(db_session, page, limit)
-    return AdvancedCategory(items=category)
+    category = await orm_category.get_all_categories(page, limit, db_session)
+    return scheme.AdvancedCategory(items=category)
 
 
-@router.get("/parent/{category_id}")
+@router.get("/parent/{category_id}", response_model=list[scheme.ParentCategory])
 async def get_parent_categories(
     category_id: int,
     db_session: AsyncSession = Depends(get_session)
@@ -37,7 +40,7 @@ async def get_parent_categories(
     return parent_categories
 
 
-@router.get("/{category_id}/product", response_model=AdvancedProduct)
+@router.get("/{category_id}/product", response_model=scheme.AdvancedProduct)
 async def get_product_category(
     category_id: int,
     page: int,
@@ -56,10 +59,10 @@ async def get_product_category(
     """
     category_product = await orm_category.get_product_by_category(
         category_id, page, limit, db_session, sort_date, sort_price, sort_name)
-    return AdvancedProduct(items=category_product)
+    return scheme.AdvancedProduct(items=category_product)
 
 
-@router.get('/search/{search_text}', response_model=AdvancedCategory)
+@router.get('/search/{search_text}', response_model=scheme.AdvancedCategory)
 async def categories_search(
     search_text: str,
     page: int = 1,
@@ -70,4 +73,4 @@ async def categories_search(
     Поиск по названию категории
     """
     search_category = await orm_category.search_categories(search_text, page, limit, db_session)
-    return AdvancedCategory(items=search_category)
+    return scheme.AdvancedCategory(items=search_category)

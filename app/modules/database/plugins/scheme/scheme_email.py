@@ -23,13 +23,14 @@ class AdvansedOption(BaseModel):
 
 
 class EmailSchemaOrder(BaseModel):
-    """ Схема валидации для получения информации о заказе
+    """
+    Схема валидации для получения информации о заказе
     """
     fio: str
     phone: str
     email_user: EmailStr
     adress_user: str | None = None
-    email_recipients: List[EmailStr]
+    email_recipients: List[EmailStr]  # Legacy params. not used!
     comment: str = Field(max_length=500)
     models: List[AdvansedOption]
     general_price: float
@@ -43,12 +44,13 @@ class EmailSchemaOrder(BaseModel):
 
 
 class EmailSchemaAppeal(BaseModel):
-    """ Схема валидации для отправки обращения
+    """
+    Схема валидации для отправки обращения
     """
     fio: str
     phone: str
     email_user: EmailStr
-    email_recipients: List[EmailStr]
+    email_recipients: List[EmailStr]  # Legacy params. not used!
     theme: str
     comment: str = Field(max_length=1000)
 

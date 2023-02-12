@@ -16,6 +16,9 @@ class PopularProduct(BaseProduct):
     """Схема популярных товаров"""
     description: str
 
+    class Config:
+        orm_mode = True
+
 
 class AdvancedPopularProduct(BaseModel):
     """Расширенная схема популярных товаров"""
@@ -25,6 +28,9 @@ class AdvancedPopularProduct(BaseModel):
 class DescProduct(BaseModel):
     """Схема базового продукта и описания"""
     description: str
+
+    class Config:
+        orm_mode = True
 
 
 class AdvancedMultipleProduct(BaseModel):
@@ -37,6 +43,9 @@ class DetailProduct(BaseProduct):
     quantity: int
     name: str
     description: str
+
+    class Config:
+        orm_mode = True
 
 
 class AdvancedProduct(BaseModel):
@@ -56,7 +65,7 @@ class MultipleProduct(BaseModel):
     @validator('ids')
     def check_value(cls, value):
         """Проверка допустимой длинны"""
-        if len(value) > 20:
+        if len(value) > 30:
             raise_error(400, "Некорректное кол-во значений")
         return value
 
@@ -65,14 +74,45 @@ class AdvancedSearchProduct(BaseModel):
     """Расширенная схема получения товаров из поиска"""
     items: List[PopularProduct]
 
+    class Config:
+        orm_mode = True
+
 
 class FilterName(BaseModel):
     """Схема получения информации о доступных фильтрах"""
     option_id: int
     name: str
 
+    class Config:
+        orm_mode = True
+
 
 class FilterGeneral(BaseModel):
     """Общая схема получения фильтров продукта"""
     items: List[FilterName]
     option: List[FilterName]
+
+
+class BaseProductCategory(BaseModel):
+    product_id: int
+    image: str
+    price: float
+
+    class Config:
+        orm_mode = True
+
+
+class BaseProductEquipment(BaseModel):
+    name: str
+    type: str
+    product_id: int
+    quantity: float
+    price: float
+    price_prefix: str
+    points: int
+    points_prefix: str
+    weight: int
+    weight_prefix: str
+
+    class Config:
+        orm_mode = True

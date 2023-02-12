@@ -1,25 +1,33 @@
-"""Settings for Docker"""
+"""Basic settings"""
 import os
+
 from pathlib import Path
+from dotenv import load_dotenv
+
 from fastapi_mail import ConnectionConfig
 
-TITLE: str = 'Mobile API Service'
-DESCRIPTION: str = 'Mobile API Service - служит сервисом для мобильного приложения. Получение данных от CMS OpenCard.'
-VERSION: str = '1.0.0'
+load_dotenv()
 
-DATABASE_USERNAME: str = os.environ["database_username"]
-DATABASE_PASSWORD: str = os.environ["database_password"]
-DATABASE_IP: str = os.environ["database_ip"]
-DATABASE_NAME: str = os.environ["database_name"]
+TITLE: str = 'Mobile API Service'
+DESCRIPTION: str = 'Mobile API Service - Сервис мобильного приложения для получения данных от CMS OpenCard.'
+VERSION: str = '1.3.0'
+
+DATABASE_USERNAME: str = os.environ["DATABASE_USERNAME"]
+DATABASE_PASSWORD: str = os.environ["DATABASE_PASSWORD"]
+DATABASE_IP: str = os.environ["DATABASE_IP"]
+DATABASE_NAME: str = os.environ["DATABASE_NAME"]
 
 SQLALCHEMY_ASYNC_DATABASE_URL: str = f"mysql+asyncmy://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_IP}/{DATABASE_NAME}"
 
+RECIPIENT_LIST = [i.strip() for i in os.environ["RECIPIENT_LIST"].split(",")]
+NUMBER_LEN_ORDER: int = 6
+
 CONF = ConnectionConfig(
-    MAIL_USERNAME=os.environ["mail_username"],
-    MAIL_PASSWORD=os.environ["mail_password"],
-    MAIL_FROM=os.environ["mail_from"],
-    MAIL_PORT=os.environ["mail_port"],
-    MAIL_SERVER=os.environ["mail_server"],
+    MAIL_USERNAME=os.environ["MAIL_USERNAME"],
+    MAIL_PASSWORD=os.environ["MAIL_PASSWORD"],
+    MAIL_FROM=os.environ["MAIL_FROM"],
+    MAIL_PORT=os.environ["MAIL_PORT"],
+    MAIL_SERVER=os.environ["MAIL_SERVER"],
     MAIL_SSL=True,
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
