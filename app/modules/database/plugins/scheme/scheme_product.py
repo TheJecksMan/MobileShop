@@ -65,7 +65,7 @@ class MultipleProduct(BaseModel):
     @validator('ids')
     def check_value(cls, value):
         """Проверка допустимой длинны"""
-        if len(value) > 20:
+        if len(value) > 30:
             raise_error(400, "Некорректное кол-во значений")
         return value
 

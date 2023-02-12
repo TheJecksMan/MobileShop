@@ -2,8 +2,8 @@
 API implementation module for product.
 /api/product
 """
-from fastapi import APIRouter, Depends
 from typing import Any
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from modules.database.deps import get_session
@@ -20,8 +20,7 @@ async def get_detail_product(
     product_id: int,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Получение базовой информации о продукте.
+    """Getting basic information about the product.
     """
     base_product = await orm_product.get_product_by_id(product_id, db_session)
     base_desc = await orm_product.get_product_description_by_id(product_id, db_session)
@@ -43,8 +42,7 @@ async def get_equipment_product(
         product_id: int,
         db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Получение информации о доступной комплектации товара
+    """Obtaining information about the available configuration of the goods
     """
     equipment = await orm_product.get_equipment(product_id, db_session)
     return equipment
@@ -55,10 +53,9 @@ async def get_detail_multiple_products(
     multiple_product: scheme.MultipleProduct,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Получение базовых данных о нескольких товарах.
+    """Getting basic data about several products.
     ---
-    Ограничение на вход до 20 значений списка
+    Input limit up to 30 list values
     """
     product = await orm_product.get_multiple_product_by_id(multiple_product.ids, db_session)
     return scheme.AdvancedMultipleProduct(items=product)
@@ -69,8 +66,7 @@ async def get_product_description(
     product_id: int,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Получение подробного описание продукта
+    """Getting a detailed product description
     """
     product = await orm_product.get_product_description_by_id(product_id, db_session)
     return product
@@ -82,6 +78,7 @@ async def get_product_category(
     limit: int = 10,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
+    """Getting a list of all products"""
     product = await orm_product.get_all_product(page, limit, db_session)
     return product
 
@@ -93,9 +90,8 @@ async def product_search(
     category_id: int = None,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Поиск товара по названию товара.
-    Возможен поиск товаров в конкретной категории
+    """Product search by product name.
+    You can search for products in a specific category
     """
     product = await orm_product.search_product(category_id, search_text, page, limit, db_session)
     return scheme.AdvancedSearchProduct(items=product)
@@ -106,9 +102,7 @@ async def get_popular_product(
     limit: int,
     db_session: AsyncSession = Depends(get_session)
 ) -> Any:
-    """
-    Список самых просматриваемых товаров.
-    Не отображает скрытые товары.
+    """List of most viewed products.
     """
     product = await orm_product.get_popular_product(limit, db_session)
     return scheme.AdvancedPopularProduct(items=product)
@@ -116,8 +110,7 @@ async def get_popular_product(
 
 @router.get("/filter/all", response_model=scheme.FilterGeneral)
 async def get_all_param_filter(db_session: AsyncSession = Depends(get_session)) -> Any:
-    """
-    Получение полного списка доступных параметров для последующей фильтрации
+    """Obtaining a complete list of available parameters for further filtering
     """
     params, option = await orm_product.get_params_option(db_session)
 

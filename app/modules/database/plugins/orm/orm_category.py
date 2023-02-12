@@ -1,22 +1,38 @@
 """ORM"""
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from modules.error.error_data import raise_error
-from modules.database.plugins.models import OcCategory, OcCategoryDescription, OcProductToCategory, OcProduct, OcProductDescription
+from modules.database.plugins.models import (
+    OcProduct,
+    OcCategory,
+    OcProductToCategory,
+    OcProductDescription,
+    OcCategoryDescription
+)
 
 
-def _sort_product(query, sort_date: int = None, sort_price: int = None, sort_name: int = None):
+def _sort_product(
+    query,
+    sort_date: int = None,
+    sort_price: int = None,
+    sort_name: int = None
+) -> Any:
+    # Sort by date column
     if sort_date == 1:
         query = query.order_by(OcProduct.date_added.asc())
     elif sort_date == -1:
         query = query.order_by(OcProduct.date_added.desc())
 
+    # Sort by price column
     if sort_price == 1:
         query = query.order_by(OcProduct.price.asc())
     elif sort_price == -1:
         query = query.order_by(OcProduct.price.desc())
 
+    # Sort by name column
     if sort_name == 1:
         query = query.order_by(OcProduct.model.asc())
     elif sort_name == -1:
@@ -25,11 +41,20 @@ def _sort_product(query, sort_date: int = None, sort_price: int = None, sort_nam
 
 
 async def get_product_by_category(
-    category_id: int, page: int, limit: int, db_session: AsyncSession,
-    sort_date: int = None, sort_price: int = None, sort_name: int = None
-):
-    """
-    Получение списка товаров по идентификатору категории
+    category_id: int,
+    page: int,
+    limit: int,
+    db_session: AsyncSession,
+    sort_date: int = None,
+    sort_price: int = None,
+    sort_name: int = None
+) -> list:
+    """Module for obtaining a list of products by category ID.
+
+    Parameters such as `sort_date`, `sort_price`, `sort_name` sort and accept 1 or -1.\n
+    1 - sorting in ascending order.\n
+    -1 - sort in descending order.
+
     """
     query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
@@ -49,9 +74,9 @@ async def get_product_by_category(
     return result.all()
 
 
-async def get_all_categories(db_session: AsyncSession, page: int, limit: int):
-    """
-    Получение полного списка категорий из базы данных
+async def get_all_categories(page: int, limit: int, db_session: AsyncSession):
+    """Getting a complete list of categories.
+    The resulting list will include only the main and non-hidden categories.
     """
     query = select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategoryDescription, OcCategory.category_id == OcCategoryDescription.category_id)\
@@ -75,8 +100,7 @@ async def get_all_categories(db_session: AsyncSession, page: int, limit: int):
 
 
 async def search_categories(search_text: str, page: int, limit: int, db_session: AsyncSession):
-    """
-    Поиск категорий по базе данных
+    """Category search. Also includes search by subcategories
     """
     query = select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)\
         .join(OcCategory, OcCategory.category_id == OcCategoryDescription.category_id)\
@@ -94,8 +118,7 @@ async def search_categories(search_text: str, page: int, limit: int, db_session:
 
 
 async def get_parent_categories(category_id: int, db_session: AsyncSession):
-    """
-    Получение подкатегорий по идентификатору категории
+    """Getting subcategories by category ID
     """
     result = await db_session.execute(
         select(OcCategory.category_id, OcCategory.image, OcCategoryDescription.name)

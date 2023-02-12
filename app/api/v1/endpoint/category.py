@@ -4,7 +4,6 @@ API implementation module for categories.
 """
 from typing import Any
 from fastapi import APIRouter, Depends
-from fastapi.responses import ORJSONResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from modules.database.deps import get_session
@@ -25,7 +24,7 @@ async def get_all_categories(
     """
     Получение списка всех доступный родительских катологов
     """
-    category = await orm_category.get_all_categories(db_session, page, limit)
+    category = await orm_category.get_all_categories(page, limit, db_session)
     return scheme.AdvancedCategory(items=category)
 
 

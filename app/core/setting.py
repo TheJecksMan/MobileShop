@@ -1,17 +1,15 @@
 """Basic settings"""
 import os
 
-from typing import List
-from pydantic import EmailStr
+from pathlib import Path
 from dotenv import load_dotenv
 
-from pathlib import Path
 from fastapi_mail import ConnectionConfig
 
 load_dotenv()
 
 TITLE: str = 'Mobile API Service'
-DESCRIPTION: str = 'Mobile API Service - служит сервисом для мобильного приложения. Получение данных от CMS OpenCard.'
+DESCRIPTION: str = 'Mobile API Service - Сервис мобильного приложения для получения данных от CMS OpenCard.'
 VERSION: str = '1.3.0'
 
 DATABASE_USERNAME: str = os.environ["DATABASE_USERNAME"]
@@ -21,7 +19,7 @@ DATABASE_NAME: str = os.environ["DATABASE_NAME"]
 
 SQLALCHEMY_ASYNC_DATABASE_URL: str = f"mysql+asyncmy://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_IP}/{DATABASE_NAME}"
 
-RECIPIENT_LIST: List[EmailStr] = [i.strip() for i in os.environ["RECIPIENT_LIST"].split(",")]
+RECIPIENT_LIST = [i.strip() for i in os.environ["RECIPIENT_LIST"].split(",")]
 NUMBER_LEN_ORDER: int = 6
 
 CONF = ConnectionConfig(

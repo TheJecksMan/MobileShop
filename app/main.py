@@ -1,4 +1,4 @@
-"""FastApi"""
+"""Main module for launching the application"""
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,4 +26,5 @@ app.include_router(api_router, prefix='/api')
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
+    """Organization favicon.ico"""
     return FileResponse("static/favicon.ico")

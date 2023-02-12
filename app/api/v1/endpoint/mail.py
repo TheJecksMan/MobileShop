@@ -6,12 +6,13 @@ import uuid
 import string
 import random
 
-from fastapi import APIRouter
-from modules.database.plugins.scheme import scheme_email
-from fastapi_mail import FastMail, MessageSchema
-from fastapi.responses import ORJSONResponse
-
 from typing import Any
+
+from fastapi import APIRouter
+from fastapi.responses import ORJSONResponse
+from fastapi_mail import FastMail, MessageSchema
+
+from modules.database.plugins.scheme import scheme_email
 
 from core.setting import CONF, NUMBER_LEN_ORDER, RECIPIENT_LIST
 
@@ -60,9 +61,8 @@ async def send_appeal_by_email(item: scheme_email.EmailSchemaAppeal) -> Any:
     """
     Отправка обращения пользователя оператору по почте
     """
-    NUMBER_LEN = 6
     chars = string.ascii_uppercase + string.digits
-    random_appeal = ''.join(random.choice(chars) for _ in range(NUMBER_LEN))
+    random_appeal = ''.join(random.choice(chars) for _ in range(NUMBER_LEN_ORDER))
 
     email_template = {
         "appeal_id": random_appeal,

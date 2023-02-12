@@ -1,4 +1,4 @@
-"""FastApi"""
+"""Routing with base path /api"""
 from fastapi import APIRouter
 from api.v1.endpoint import product, category, mail
 

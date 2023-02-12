@@ -1,56 +1,53 @@
 """ORM"""
 from typing import List
-from modules.database.plugins.models import (
-    OcProduct,
-    OcProductDescription,
-    OcStockStatu,
-    OcProductToCategory,
-    OcOptionValueDescription,
-    OcOptionDescription,
-    OcProductOptionValue
-)
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from modules.error.error_data import raise_error
+from modules.database.plugins.models import (
+    OcProduct,
+    OcStockStatu,
+    OcOptionDescription,
+    OcProductToCategory,
+    OcProductDescription,
+    OcProductOptionValue,
+    OcOptionValueDescription
+)
 
 
 async def get_product_by_id(product_id: int, db_session: AsyncSession):
-    """
-    Получение продукта по идентификатору в базе данных
+    """Getting a product by ID. Does not include hidden items.
     """
     result = await db_session.execute(
         select(OcProduct.product_id, OcProduct.model, OcProduct.image,
                OcProduct.price, OcProduct.quantity, OcStockStatu.name)
         .join(OcStockStatu, OcProduct.stock_status_id == OcStockStatu.stock_status_id)
-        .where(OcProduct.product_id == product_id)
+        .where(OcProduct.product_id == product_id, OcProduct.status != 0)
     )
     result = result.first()
     if not result:
-        raise_error(400)
+        raise_error(404, "Not Found!")
     return result
 
 
 async def get_multiple_product_by_id(products_ids: List[int], db_session: AsyncSession):
-    """
-    Получение информации о нескольких продуктов по идентификатору в базе данных
+    """Get information about multiple products by ID. Does not include hidden items.
     """
     result = await db_session.execute(
         select(OcProduct.product_id, OcProduct.model, OcProduct.image,
                OcProduct.price, OcProductDescription.description)
         .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
-        .where(OcProduct.product_id.in_(products_ids), OcProduct.status == 1)
+        .where(OcProduct.product_id.in_(products_ids), OcProduct.status != 0)
     )
     result = result.all()
     if not result:
-        raise_error(400)
+        raise_error(404, "Not Found!")
     return result
 
 
 async def get_product_description_by_id(product_id: int, db_session: AsyncSession):
-    """
-    Получение подробного описания по идентификатору продукта
+    """Get a detailed description by product ID. Include hidden items.
     """
     result = await db_session.execute(
         select(OcProductDescription.description)
@@ -63,15 +60,14 @@ async def get_product_description_by_id(product_id: int, db_session: AsyncSessio
 
 
 async def get_popular_product(limit: int, db_session: AsyncSession):
-    """
-    Получение списка самых просматривемых товаров из базы данных
+    """Getting a list of the most viewed products.
     """
     try:
         result = await db_session.execute(
             select(OcProduct.product_id, OcProduct.model, OcProduct.image,
                    OcProduct.price, OcProductDescription.description)
             .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
-            .where(OcProduct.status == 1)
+            .where(OcProduct.status != 0)
             .order_by(OcProduct.viewed.desc())
             .limit(limit)
         )
@@ -81,11 +77,10 @@ async def get_popular_product(limit: int, db_session: AsyncSession):
 
 
 async def get_all_product(page: int, limit: int, db_session: AsyncSession):
-    """
-    Получение списка всех продуктов из базы данных. (Почти не используется)
+    """Getting a list of all products (not recommended to use). Does not include hidden items.
     """
     query = select(OcProduct.product_id, OcProduct.image, OcProduct.price)\
-        .where(OcProduct.status == 1)\
+        .where(OcProduct.status != 0)\
         .limit(limit)
 
     if page != 1:
@@ -97,9 +92,14 @@ async def get_all_product(page: int, limit: int, db_session: AsyncSession):
     return result.all()
 
 
-async def search_product(category_id: int, search_text: str, page: int, limit: int, db_session: AsyncSession):
-    """
-    Поиск товара в базе данных по полученному тексту
+async def search_product(
+    category_id: int,
+    search_text: str,
+    page: int,
+    limit: int,
+    db_session: AsyncSession
+):
+    """Database search. The pattern %<text>% is used
     """
     query = select(OcProduct.product_id, OcProduct.model, OcProduct.image, OcProduct.price, OcProductDescription.description)\
         .join(OcProductDescription, OcProductDescription.product_id == OcProduct.product_id)
@@ -107,7 +107,7 @@ async def search_product(category_id: int, search_text: str, page: int, limit: i
     if category_id is not None:
         query = query.join(OcProductToCategory, OcProductToCategory.product_id == OcProduct.product_id)\
             .where(OcProductToCategory.category_id == category_id)
-    query = query.where(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status == 1)
+    query = query.where(OcProduct.model.like(f'%{search_text}%'),  OcProduct.status != 0)
 
     try:
         if page != 1:
@@ -123,8 +123,7 @@ async def search_product(category_id: int, search_text: str, page: int, limit: i
 
 
 async def get_params_option(db_session: AsyncSession):
-    """
-    Получение глобальных фильтров из базы данных
+    """Getting global filters.
     """
     result_name = await db_session.execute(
         select(OcOptionDescription.option_id, OcOptionDescription.name)
@@ -136,8 +135,7 @@ async def get_params_option(db_session: AsyncSession):
 
 
 async def get_equipment(product_id: int, db_session: AsyncSession):
-    """
-    Получение комплектации по идентификатору товара
+    """Retrieving a bundle by product ID. Include hidden items.
     """
     result = await db_session.execute(
         select(OcOptionValueDescription.name, OcOptionDescription.name.label('type'),
