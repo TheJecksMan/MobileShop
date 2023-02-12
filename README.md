@@ -11,8 +11,8 @@ DATABASE_PASSWORD="<пароль пользователя базы данных>
 DATABASE_IP="<ip адрес базы данных>"
 DATABASE_NAME="<имя базы данных>"
 
-MAIL_USERNAME="domaintestsmtp"
-MAIL_PASSWORD="dN7Q4*WsZTG!RzU"
+MAIL_USERNAME="<имя>"
+MAIL_PASSWORD="<gfhjkm>"
 MAIL_FROM="<имя>@<домен>"
 MAIL_PORT=<smtp порт>
 MAIL_SERVER="<домен почтового сервера>"
