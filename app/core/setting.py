@@ -12,6 +12,8 @@ TITLE: str = 'Mobile API Service'
 DESCRIPTION: str = 'Mobile API Service - Сервис мобильного приложения для получения данных от CMS OpenCard.'
 VERSION: str = '1.3.0'
 
+DEBUG_MODE = os.getenv("DEBUG_MODE", None)
+
 DATABASE_USERNAME: str = os.environ["DATABASE_USERNAME"]
 DATABASE_PASSWORD: str = os.environ["DATABASE_PASSWORD"]
 DATABASE_IP: str = os.environ["DATABASE_IP"]

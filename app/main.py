@@ -5,12 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from api.v1.api import api_router
-from core.setting import TITLE, DESCRIPTION, VERSION
+from core.setting import TITLE, DESCRIPTION, VERSION, DEBUG_MODE
 
 app = FastAPI(
     title=TITLE,
     description=DESCRIPTION,
-    version=VERSION
+    version=VERSION,
+    docs_url=DEBUG_MODE
 )
 
 app.add_middleware(
