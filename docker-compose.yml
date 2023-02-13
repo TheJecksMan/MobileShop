@@ -9,6 +9,17 @@ services:
       dockerfile: ./Dockerfile.prod
     expose:
       - 80
+    environment:
+      - DATABASE_USERNAME=
+      - DATABASE_PASSWORD=
+      - DATABASE_IP=
+      - DATABASE_NAME=
+      - MAIL_USERNAME=
+      - MAIL_PASSWORD=
+      - MAIL_FROM=
+      - MAIL_PORT=465
+      - MAIL_SERVER=
+      - RECIPIENT_LIST=
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fastapi.rule=Host(`<domain>`)"
