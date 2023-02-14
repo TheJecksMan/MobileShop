@@ -1,21 +1,16 @@
 # MobileShop
-Back-end для мобильной версии сайта
+Данный проект предоставляет API используя данные CMS OpenCart
 
 
 ***Запуск и установка:***
 ### Debug
 1. Склонировать репозиторий `git clone <repository>`
-2. Перейти в папку с репозиторием
+2. Перейти в папку с репозиторием `cd <dir>`
 3. Создать виртуальное окружение `python -m venv .venv` (Необязательно)
 4. Войти в виртуальное окружение
 5. Установить зависимости `pip intsall  --no-cache-dir  -r requirements.txt`
 6. Перейти в папку с **main.py** `cd app/`
-7. Выполнить для локального запуска `uvicorn main:app --reload`
-
-***Настройка проекта:***
-
-Создайте файл `.env` в app, используя следующий шаблон:
-
+7. Создать файл .env по следующему образцу:
 ```.env
 DATABASE_USERNAME="<имя пользователя базы данных>"
 DATABASE_PASSWORD="<пароль пользователя базы данных>"
@@ -23,32 +18,35 @@ DATABASE_IP="<ip адрес базы данных>"
 DATABASE_NAME="<имя базы данных>"
 
 MAIL_USERNAME="<имя>"
-MAIL_PASSWORD="<gfhjkm>"
+MAIL_PASSWORD="<пароль>"
 MAIL_FROM="<имя>@<домен>"
-MAIL_PORT=<smtp порт>
-MAIL_SERVER="<домен почтового сервера>"
+MAIL_PORT=465
+MAIL_SERVER="<почтовый сервер>"
 
-RECIPIENT_LIST="<почта #1>, почта #2"
+DEBUG_MODE="/docs" # Только для отладки!
+
+RECIPIENT_LIST="<почта #1>, <почта #2>"
 или 
 RECIPIENT_LIST="<почта #1>"
 ```
+8. Запустить `uvicorn main:app --reload`
 
 ### Release (Установка на сервер)
 1. Склонируйте репозиторий `git clone <repository>`
-2. Перейти в папку с репозиторием
+2. Перейти в папку с репозиторием `cd <dir>`
 3. Настройте переменные [docker-compose.yml](https://github.com/TheJecksMan/MobileShop/blob/master/docker-compose.yml) для подключения к основным компонентам сервера:
 ```Docker
  environment:
-      - DATABASE_USERNAME=
-      - DATABASE_PASSWORD=
-      - DATABASE_IP=
-      - DATABASE_NAME=
-      - MAIL_USERNAME=
-      - MAIL_PASSWORD=
-      - MAIL_FROM=
+      - DATABASE_USERNAME=<имя пользователя базы данных>
+      - DATABASE_PASSWORD=<пароль пользователя базы данных>
+      - DATABASE_IP=<ip адрес базы данных>
+      - DATABASE_NAME=<имя базы данных>
+      - MAIL_USERNAME=<имя>
+      - MAIL_PASSWORD=<пароль>
+      - MAIL_FROM=<имя>@<домен>
       - MAIL_PORT=465
-      - MAIL_SERVER=
-      - RECIPIENT_LIST=
+      - MAIL_SERVER=<почтовый сервер>
+      - RECIPIENT_LIST=<email#1,email#2>
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fastapi.rule=Host(`<domain>`)"
@@ -61,13 +59,8 @@ RECIPIENT_LIST="<почта #1>"
   email = "<почта привязанная к домену>"
 ```
 5. Соберите контейнер `docker-compose build`
-6. После успешной сборки запустите контейнер `docker-compose up -d`, Пре перезагрузки сервера контенер сам запуститься.
+6. После успешной сборки запустите контейнер `docker-compose up -d` (При перезагрузки сервера, контейнер запуститься автоматически).
 
 > Примечание
 >
-> Сертификаты SSL letsencrypt автоматически будут продлеваться **за месяц до окончания** без необходимости перезагрузки сервера
-
-
-## Возможные проблемы
-Некоторые зависимости (драйвер MySQL) требуют дополнительный пакетов, установите их (Необязательно, всё сделвет Docker):
-`sudo apt-get install python3-dev default-libmysqlclient-dev build-essential`
+> Сертификаты SSL Let’s Encrypt автоматически будут продлеваться (**за месяц до окончания**) без необходимости перезагрузки сервера.
